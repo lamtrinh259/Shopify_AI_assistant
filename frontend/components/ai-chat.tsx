@@ -74,25 +74,25 @@ function getResponse(input: string, lang: 'en' | 'es'): string {
 }
 
 export default function AiChat({ t }: AiChatProps) {
-  const [messages, setMessages] = useState<Message[]>(() => {
-    if (typeof window === 'undefined') return []
+  // Always start with empty/default state to match server render, then hydrate from localStorage
+  const [messages, setMessages] = useState<Message[]>([])
+  const [input, setInput] = useState('')
+  const [isTyping, setIsTyping] = useState(false)
+  const [lang, setLang] = useState<'en' | 'es'>('en')
+  const [apiKey, setApiKey] = useState('')
+  const [showKeyInput, setShowKeyInput] = useState(false)
+
+  // Hydrate from localStorage after mount (client-side only, avoids SSR mismatch)
+  useEffect(() => {
     try {
       const saved = localStorage.getItem('pulse-chat')
       if (saved) {
         const parsed = JSON.parse(saved)
-        return parsed.map((m: any) => ({ ...m, timestamp: new Date(m.timestamp) }))
+        setMessages(parsed.map((m: any) => ({ ...m, timestamp: new Date(m.timestamp) })))
       }
     } catch {}
-    return []
-  })
-  const [input, setInput] = useState('')
-  const [isTyping, setIsTyping] = useState(false)
-  const [lang, setLang] = useState<'en' | 'es'>('en')
-  const [apiKey, setApiKey] = useState(() => {
-    if (typeof window === 'undefined') return ''
-    return localStorage.getItem('anthropic-key') || ''
-  })
-  const [showKeyInput, setShowKeyInput] = useState(false)
+    setApiKey(localStorage.getItem('anthropic-key') || '')
+  }, [])
 
   // Persist chat to localStorage
   useEffect(() => {
