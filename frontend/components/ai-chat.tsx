@@ -74,10 +74,29 @@ function getResponse(input: string, lang: 'en' | 'es'): string {
 }
 
 export default function AiChat({ t }: AiChatProps) {
-  const [messages, setMessages] = useState<Message[]>([])
+  const [messages, setMessages] = useState<Message[]>(() => {
+    if (typeof window === 'undefined') return []
+    try {
+      const saved = localStorage.getItem('pulse-chat')
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        return parsed.map((m: any) => ({ ...m, timestamp: new Date(m.timestamp) }))
+      }
+    } catch {}
+    return []
+  })
   const [input, setInput] = useState('')
   const [isTyping, setIsTyping] = useState(false)
   const [lang, setLang] = useState<'en' | 'es'>('en')
+
+  // Persist chat to localStorage
+  useEffect(() => {
+    if (messages.length > 0) {
+      localStorage.setItem('pulse-chat', JSON.stringify(messages))
+    } else {
+      localStorage.removeItem('pulse-chat')
+    }
+  }, [messages])
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   // Detect lang from t function

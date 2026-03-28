@@ -99,13 +99,30 @@ export interface SimulatorState {
   isRunning: boolean
 }
 
+function loadSaved(): { revenue: number; orders: number; customers: number } {
+  if (typeof window === 'undefined') return { revenue: 4280, orders: 23, customers: 312 }
+  try {
+    const s = localStorage.getItem('pulse-sim')
+    if (s) return JSON.parse(s)
+  } catch {}
+  return { revenue: 4280, orders: 23, customers: 312 }
+}
+
 export function useSimulator(intervalMs = 6000, maxEvents = 50) {
+  const saved = loadSaved()
   const [events, setEvents] = useState<LiveEvent[]>([])
-  const [totalRevenue, setTotalRevenue] = useState(4280)
-  const [totalOrders, setTotalOrders] = useState(23)
-  const [totalCustomers, setTotalCustomers] = useState(312)
+  const [totalRevenue, setTotalRevenue] = useState(saved.revenue)
+  const [totalOrders, setTotalOrders] = useState(saved.orders)
+  const [totalCustomers, setTotalCustomers] = useState(saved.customers)
   const [isRunning, setIsRunning] = useState(true)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
+
+  // Persist to localStorage
+  useEffect(() => {
+    localStorage.setItem('pulse-sim', JSON.stringify({
+      revenue: totalRevenue, orders: totalOrders, customers: totalCustomers
+    }))
+  }, [totalRevenue, totalOrders, totalCustomers])
 
   const addEvent = useCallback(() => {
     const event = generateEvent()

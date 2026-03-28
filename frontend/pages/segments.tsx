@@ -22,10 +22,10 @@ interface RFMCustomer {
 type SegmentKey = 'Champions' | 'Loyal' | 'At Risk' | 'Lost'
 
 const SEGMENT_COLORS: Record<SegmentKey, string> = {
-  Champions: '#00FF94',
-  Loyal: '#3B82F6',
-  'At Risk': '#FFB224',
-  Lost: '#FF4444',
+  Champions: '#F0B90B',
+  Loyal: '#448AFF',
+  'At Risk': '#FF9100',
+  Lost: '#FF3D57',
 }
 
 const SEGMENT_BADGE_VARIANT: Record<SegmentKey, 'success' | 'warning' | 'error' | 'neutral'> = {
@@ -119,7 +119,7 @@ export default function SegmentsPage() {
   const columns: Column[] = [
     {
       key: 'name',
-      label: 'Customer',
+      label: 'CUSTOMER',
       sortable: true,
       render: (value: string, row: RFMCustomer) => (
         <div>
@@ -130,7 +130,7 @@ export default function SegmentsPage() {
     },
     {
       key: 'segment',
-      label: 'Segment',
+      label: 'SEGMENT',
       sortable: true,
       render: (value: string) => (
         <Badge variant={SEGMENT_BADGE_VARIANT[value as SegmentKey] || 'neutral'}>
@@ -143,7 +143,7 @@ export default function SegmentsPage() {
       label: 'R',
       sortable: true,
       render: (value: number) => (
-        <span className="font-mono text-sm text-text-secondary">{value}</span>
+        <span className="font-mono font-bold text-sm text-text-secondary">{value}</span>
       ),
     },
     {
@@ -151,7 +151,7 @@ export default function SegmentsPage() {
       label: 'F',
       sortable: true,
       render: (value: number) => (
-        <span className="font-mono text-sm text-text-secondary">{value}</span>
+        <span className="font-mono font-bold text-sm text-text-secondary">{value}</span>
       ),
     },
     {
@@ -159,33 +159,33 @@ export default function SegmentsPage() {
       label: 'M',
       sortable: true,
       render: (value: number) => (
-        <span className="font-mono text-sm text-text-secondary">{value}</span>
+        <span className="font-mono font-bold text-sm text-text-secondary">{value}</span>
       ),
     },
     {
       key: 'orders_count',
-      label: 'Orders',
+      label: 'ORDERS',
       sortable: true,
       render: (value: number) => (
-        <span className="font-mono text-sm text-text-primary">{value}</span>
+        <span className="font-mono font-bold text-sm text-text-primary">{value}</span>
       ),
     },
     {
       key: 'total_spent',
-      label: 'Total Spent',
+      label: 'TOTAL SPENT',
       sortable: true,
       render: (value: number) => (
-        <span className="font-mono text-sm text-text-primary">
+        <span className="font-mono font-bold text-sm text-paint-green">
           ${value.toLocaleString()}
         </span>
       ),
     },
     {
       key: 'last_order_days_ago',
-      label: 'Last Order',
+      label: 'LAST ORDER',
       sortable: true,
       render: (value: number) => (
-        <span className="text-sm text-text-secondary">
+        <span className="font-mono text-sm text-text-secondary">
           {value}d ago
         </span>
       ),
@@ -251,7 +251,7 @@ export default function SegmentsPage() {
                 return (
                   <div
                     key={segment}
-                    className="bg-surface-0 border border-border rounded-lg p-3 transition-colors duration-150 hover:border-white/10"
+                    className="bg-surface-0 border border-border rounded-lg p-3 pollock-glow transition-colors duration-150 hover:border-white/10"
                   >
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
@@ -259,13 +259,13 @@ export default function SegmentsPage() {
                           className="w-2.5 h-2.5 rounded-full"
                           style={{ backgroundColor: SEGMENT_COLORS[segment] }}
                         />
-                        <span className="text-sm font-medium text-text-primary">{segment}</span>
+                        <span className="text-sm font-medium text-text-primary font-headline">{segment}</span>
                       </div>
                       <span className="text-xs font-mono text-text-tertiary">{pct}%</span>
                     </div>
                     <div className="flex items-baseline justify-between">
                       <span className="text-xl font-semibold text-text-primary font-mono">{count}</span>
-                      <span className="text-xs text-text-secondary">avg ${avgSpent}</span>
+                      <span className="text-xs text-text-secondary font-mono">avg ${avgSpent}</span>
                     </div>
                     <div className="mt-2 h-1 rounded-full bg-surface-2 overflow-hidden">
                       <div

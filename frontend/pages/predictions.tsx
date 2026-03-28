@@ -74,7 +74,7 @@ function buildProjectionData(row: PredictionRow): { label: string; value: number
 
 function KPISkeleton() {
   return (
-    <div className="bg-surface-1 border border-border rounded-lg p-4 animate-pulse">
+    <div className="bg-surface-1 border border-border rounded-lg p-4 animate-pulse pollock-glow">
       <div className="h-3 w-20 bg-surface-2 rounded mb-3" />
       <div className="h-7 w-12 bg-surface-2 rounded" />
     </div>
@@ -191,7 +191,7 @@ export default function PredictionsPage() {
       label: 'Stock',
       sortable: true,
       render: (value: number) => (
-        <span className="font-mono text-text-primary">{value}</span>
+        <span className="font-mono font-bold text-text-primary">{value}</span>
       ),
     },
     {
@@ -199,7 +199,7 @@ export default function PredictionsPage() {
       label: 'Daily Velocity',
       sortable: true,
       render: (value: number) => (
-        <span className="font-mono text-text-secondary">{value}/day</span>
+        <span className="font-mono font-bold text-text-secondary">{value}/day</span>
       ),
     },
     {
@@ -209,12 +209,12 @@ export default function PredictionsPage() {
       render: (value: number, row: PredictionRow) => {
         const colorClass =
           row.status === 'critical'
-            ? 'text-status-error'
+            ? 'text-paint-red'
             : row.status === 'warning'
-            ? 'text-status-warning'
-            : 'text-status-success'
+            ? 'text-paint-yellow'
+            : 'text-paint-green'
         return (
-          <span className={`font-mono font-semibold ${colorClass}`}>
+          <span className={`font-mono font-bold ${colorClass}`}>
             {value < 999 ? `${value.toFixed(1)}d` : '99+'}
           </span>
         )
@@ -248,7 +248,7 @@ export default function PredictionsPage() {
                 </svg>
               </div>
               <div>
-                <p className="text-sm font-semibold text-text-primary font-headline">
+                <p className="text-sm font-semibold text-text-primary font-headline tracking-tight">
                   {criticalCount} product{criticalCount > 1 ? 's' : ''} will stock out within 48 hours
                 </p>
                 <p className="text-xs text-text-secondary mt-1">
@@ -299,7 +299,7 @@ export default function PredictionsPage() {
                       onClick={() => setSelectedId(p.id)}
                       className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors duration-150 ease-out border ${
                         (selectedProduct?.id === p.id)
-                          ? 'border-accent/40 bg-accent/10 text-accent'
+                          ? 'border-paint-yellow/40 bg-paint-yellow/10 text-paint-yellow'
                           : 'border-border bg-surface-2/50 text-text-secondary hover:text-text-primary hover:bg-surface-2'
                       }`}
                     >
@@ -321,15 +321,15 @@ export default function PredictionsPage() {
               />
               <div className="flex items-center gap-4 mt-3">
                 <div className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-status-error" />
+                  <span className="w-2 h-2 rounded-full bg-paint-red" />
                   <span className="text-xs text-text-tertiary">Critical (&lt;3 days)</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-status-warning" />
+                  <span className="w-2 h-2 rounded-full bg-paint-yellow" />
                   <span className="text-xs text-text-tertiary">Low Stock (&lt;7 days)</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-status-success" />
+                  <span className="w-2 h-2 rounded-full bg-paint-green" />
                   <span className="text-xs text-text-tertiary">Healthy (7+ days)</span>
                 </div>
               </div>

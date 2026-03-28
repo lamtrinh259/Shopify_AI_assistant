@@ -86,22 +86,22 @@ function StatusIndicator({ isAnomaly }: { isAnomaly: boolean }) {
     <div className={cn(
       'relative flex items-center justify-center rounded-xl border p-6',
       isAnomaly
-        ? 'bg-[#FF4444]/5 border-[#FF4444]/20'
-        : 'bg-[#00FF94]/5 border-[#00FF94]/20'
+        ? 'bg-paint-red/5 border-paint-red/20'
+        : 'bg-paint-green/5 border-paint-green/20'
     )}>
       {/* Pulsing ring for anomaly */}
       {isAnomaly && (
-        <div className="absolute inset-0 rounded-xl border border-[#FF4444]/30 animate-ping" style={{ animationDuration: '2s' }} />
+        <div className="absolute inset-0 rounded-xl border border-paint-red/30 animate-ping" style={{ animationDuration: '2s' }} />
       )}
       <div className="flex items-center gap-4">
         <div className={cn(
           'w-4 h-4 rounded-full',
-          isAnomaly ? 'bg-[#FF4444] animate-pulse' : 'bg-[#00FF94]'
+          isAnomaly ? 'bg-paint-red animate-pulse' : 'bg-paint-green'
         )} />
         <div>
           <p className={cn(
-            'text-2xl font-bold tracking-tight font-mono',
-            isAnomaly ? 'text-[#FF4444]' : 'text-[#00FF94]'
+            'text-3xl font-bold tracking-tight font-headline',
+            isAnomaly ? 'text-paint-red' : 'text-paint-green'
           )}>
             {isAnomaly ? 'ANOMALY DETECTED' : 'ALL SYSTEMS NORMAL'}
           </p>
@@ -130,10 +130,10 @@ function HeatMapInline({
   const getColor = (actual: number, baselineVal: number) => {
     if (baselineVal === 0) return 'bg-surface-2'
     const ratio = actual / baselineVal
-    if (ratio >= 3.0) return 'bg-[#FF4444]'
+    if (ratio >= 3.0) return 'bg-paint-red'
     if (ratio >= 2.0) return 'bg-[#FFB224]'
-    if (ratio >= 1.3) return 'bg-[#00FF94]/60'
-    if (ratio >= 0.7) return 'bg-[#00FF94]/25'
+    if (ratio >= 1.3) return 'bg-paint-green/60'
+    if (ratio >= 0.7) return 'bg-paint-green/25'
     return 'bg-surface-2'
   }
 
@@ -177,11 +177,11 @@ function HeatMapInline({
             <span className="text-[10px] text-text-tertiary">Normal</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded-sm bg-[#00FF94]/25" />
+            <div className="w-3 h-3 rounded-sm bg-paint-green/25" />
             <span className="text-[10px] text-text-tertiary">Slightly above</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded-sm bg-[#00FF94]/60" />
+            <div className="w-3 h-3 rounded-sm bg-paint-green/60" />
             <span className="text-[10px] text-text-tertiary">Above avg</span>
           </div>
           <div className="flex items-center gap-1.5">
@@ -189,7 +189,7 @@ function HeatMapInline({
             <span className="text-[10px] text-text-tertiary">&gt;2x baseline</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded-sm bg-[#FF4444]" />
+            <div className="w-3 h-3 rounded-sm bg-paint-red" />
             <span className="text-[10px] text-text-tertiary">&gt;3x baseline</span>
           </div>
         </div>
@@ -201,9 +201,9 @@ function HeatMapInline({
 function SeverityBadge({ severity }: { severity: 'critical' | 'warning' }) {
   return (
     <span className={cn(
-      'inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium',
+      'inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wide',
       severity === 'critical'
-        ? 'bg-[#FF4444]/10 text-[#FF4444]'
+        ? 'bg-paint-red/10 text-paint-red'
         : 'bg-[#FFB224]/10 text-[#FFB224]'
     )}>
       {severity === 'critical' ? 'Critical' : 'Warning'}
@@ -233,8 +233,8 @@ export default function AnomaliesPage() {
       label: HOUR_LABELS[i],
       value: actual,
       color: i === currentHour
-        ? (isAnomaly ? '#FF4444' : '#00FF94')
-        : 'rgba(0, 255, 148, 0.25)',
+        ? (isAnomaly ? '#F0B90B' : '#00E676')
+        : 'rgba(0, 230, 118, 0.25)',
     }
   })
 
@@ -276,12 +276,12 @@ export default function AnomaliesPage() {
             value={baselineAvg}
             suffix={`avg @ ${HOUR_LABELS[currentHour]}`}
           />
-          <div className="bg-surface-1 border border-border rounded-lg p-4">
-            <p className="text-xs text-text-tertiary mb-2">Deviation</p>
+          <div className="bg-surface-1 border border-border rounded-lg p-4 pollock-glow">
+            <p className="text-label mb-2">Deviation</p>
             <div className="flex items-baseline gap-1">
               <span className={cn(
-                'text-2xl font-semibold font-mono',
-                isAnomaly ? 'text-[#FF4444]' : 'text-[#00FF94]'
+                'text-3xl font-bold font-mono',
+                isAnomaly ? 'text-paint-red' : 'text-paint-green'
               )}>
                 +{deviation.toFixed(1)}%
               </span>
@@ -289,11 +289,11 @@ export default function AnomaliesPage() {
             <div className="flex items-center gap-1.5 mt-2">
               <div className={cn(
                 'w-1.5 h-1.5 rounded-full',
-                isAnomaly ? 'bg-[#FF4444] animate-pulse' : 'bg-[#00FF94]'
+                isAnomaly ? 'bg-paint-red animate-pulse' : 'bg-paint-green'
               )} />
               <span className={cn(
                 'text-xs font-medium',
-                isAnomaly ? 'text-[#FF4444]' : 'text-[#00FF94]'
+                isAnomaly ? 'text-paint-red' : 'text-paint-green'
               )}>
                 {isAnomaly ? 'Anomaly threshold exceeded' : 'Within normal range'}
               </span>
@@ -337,14 +337,14 @@ export default function AnomaliesPage() {
                 className={cn(
                   'flex items-start gap-4 p-3 rounded-lg border transition-colors duration-150',
                   anomaly.severity === 'critical'
-                    ? 'bg-[#FF4444]/[0.03] border-[#FF4444]/10'
+                    ? 'bg-paint-red/[0.03] border-paint-red/10'
                     : 'bg-[#FFB224]/[0.03] border-[#FFB224]/10'
                 )}
               >
                 {/* Indicator dot */}
                 <div className={cn(
                   'w-2 h-2 rounded-full mt-1.5 shrink-0',
-                  anomaly.severity === 'critical' ? 'bg-[#FF4444]' : 'bg-[#FFB224]'
+                  anomaly.severity === 'critical' ? 'bg-paint-red' : 'bg-[#FFB224]'
                 )} />
 
                 <div className="flex-1 min-w-0">
@@ -366,18 +366,18 @@ export default function AnomaliesPage() {
                   </p>
                   <div className="flex items-center gap-4 mt-2">
                     <span className="text-[11px] text-text-tertiary">
-                      Baseline: <span className="text-text-secondary font-mono">{anomaly.baseline}</span>
+                      Baseline: <span className="text-text-secondary font-mono font-bold">{anomaly.baseline}</span>
                     </span>
                     <span className="text-[11px] text-text-tertiary">
                       Actual: <span className={cn(
-                        'font-mono font-medium',
-                        anomaly.severity === 'critical' ? 'text-[#FF4444]' : 'text-[#FFB224]'
+                        'font-mono font-bold',
+                        anomaly.severity === 'critical' ? 'text-paint-red' : 'text-[#FFB224]'
                       )}>{anomaly.actual}</span>
                     </span>
                     <span className="text-[11px] text-text-tertiary">
                       Deviation: <span className={cn(
-                        'font-mono font-medium',
-                        anomaly.severity === 'critical' ? 'text-[#FF4444]' : 'text-[#FFB224]'
+                        'font-mono font-bold',
+                        anomaly.severity === 'critical' ? 'text-paint-red' : 'text-[#FFB224]'
                       )}>+{anomaly.deviation.toFixed(1)}%</span>
                     </span>
                   </div>
