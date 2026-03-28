@@ -122,16 +122,26 @@ export default function AiChat({ t }: AiChatProps) {
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="flex items-center gap-2 mb-3">
-        <div className="w-6 h-6 rounded-full bg-accent/15 flex items-center justify-center">
-          <svg width="14" height="14" viewBox="0 0 14 14" className="text-accent">
-            <circle cx="7" cy="7" r="6" stroke="currentColor" strokeWidth="1.2" fill="none" />
-            <path d="M5 6.5c0-.8.9-1.5 2-1.5s2 .7 2 1.5-.9 1.5-2 1.5v1" stroke="currentColor" strokeWidth="1" strokeLinecap="round" fill="none" />
-            <circle cx="7" cy="10.5" r="0.5" fill="currentColor" />
-          </svg>
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <div className="w-6 h-6 rounded-full bg-accent/15 flex items-center justify-center">
+            <svg width="14" height="14" viewBox="0 0 14 14" className="text-accent">
+              <circle cx="7" cy="7" r="6" stroke="currentColor" strokeWidth="1.2" fill="none" />
+              <path d="M5 6.5c0-.8.9-1.5 2-1.5s2 .7 2 1.5-.9 1.5-2 1.5v1" stroke="currentColor" strokeWidth="1" strokeLinecap="round" fill="none" />
+              <circle cx="7" cy="10.5" r="0.5" fill="currentColor" />
+            </svg>
+          </div>
+          <h3 className="text-sm font-medium text-text-primary">{t('aiCeo')}</h3>
+          <span className="text-xs text-text-tertiary px-1.5 py-0.5 bg-surface-2 rounded">Claude</span>
         </div>
-        <h3 className="text-sm font-medium text-text-primary">{t('aiCeo')}</h3>
-        <span className="text-xs text-text-tertiary px-1.5 py-0.5 bg-surface-2 rounded">Claude</span>
+        {messages.length > 0 && (
+          <button
+            onClick={() => setMessages([])}
+            className="text-[10px] text-text-tertiary hover:text-text-secondary px-2 py-1 rounded hover:bg-surface-2 transition-colors font-mono"
+          >
+            Clear
+          </button>
+        )}
       </div>
 
       {/* Messages */}
