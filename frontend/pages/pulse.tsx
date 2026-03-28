@@ -8,6 +8,7 @@ import AlertFeed, { generateMockAlerts } from '../components/alert-feed'
 import ActionPanel from '../components/action-panel'
 import LangToggle from '../components/lang-toggle'
 import LiveFeed from '../components/LiveFeed'
+import AiChat from '../components/ai-chat'
 import LineChart from '../components/charts/LineChart'
 import { useTranslation } from '../lib/i18n'
 import {
@@ -188,6 +189,13 @@ export default function PulsePage() {
             <ActionPanel t={t} loading={loading} />
           </Card>
         </div>
+      </div>
+
+      {/* Row 3: AI Chat */}
+      <div className="mb-5">
+        <Card>
+          <AiChat t={t} />
+        </Card>
       </div>
     </Shell>
   )
