@@ -121,6 +121,60 @@ app.include_router(actions.router)
 app.include_router(shopify_proxy.router)
 
 
+@app.post("/ai/chat")
+async def ai_chat(request: Request):
+    """Proxy Claude API calls using user-provided key."""
+    import httpx
+    body = await request.json()
+    api_key = body.get("api_key", "")
+    message = body.get("message", "")
+    lang = body.get("lang", "en")
+
+    if not api_key or not message:
+        return {"error": "api_key and message required"}
+
+    # Fetch store context
+    try:
+        async with async_session_factory() as db:
+            from app.models import Product, Order
+            products_result = await db.execute(select(Product).limit(10))
+            products = [{"title": p.title, "inventory": p.inventory_total, "price_min": p.price_min} for p in products_result.scalars().all()]
+            orders_result = await db.execute(select(func.count()).select_from(Order))
+            order_count = orders_result.scalar() or 0
+    except Exception:
+        products = []
+        order_count = 0
+
+    system_prompt = f"""You are an AI CEO assistant for a Shopify store. Respond in {'Spanish' if lang == 'es' else 'English'}.
+Store context: {len(products)} products, {order_count} orders.
+Products: {products[:5]}
+Give actionable, specific advice based on this data. Keep responses under 150 words."""
+
+    try:
+        async with httpx.AsyncClient() as client:
+            resp = await client.post(
+                "https://api.anthropic.com/v1/messages",
+                headers={
+                    "x-api-key": api_key,
+                    "anthropic-version": "2023-06-01",
+                    "content-type": "application/json",
+                },
+                json={
+                    "model": "claude-haiku-4-5-20251001",
+                    "max_tokens": 300,
+                    "system": system_prompt,
+                    "messages": [{"role": "user", "content": message}],
+                },
+                timeout=15.0,
+            )
+            data = resp.json()
+            if "content" in data and len(data["content"]) > 0:
+                return {"response": data["content"][0]["text"]}
+            return {"error": data.get("error", {}).get("message", "Unknown error")}
+    except Exception as exc:
+        return {"error": str(exc)}
+
+
 @app.post("/configure")
 async def configure_store(request: Request):
     """Update Shopify credentials, rewrite .env, and re-sync."""
