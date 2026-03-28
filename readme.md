@@ -42,23 +42,79 @@ The centrepiece of the app. A real-time command center that gives merchants an a
 
 ---
 
-## Quick Start
+## Running Locally
+
+### Prerequisites
+- Node.js 18+
+- Python 3.10+
+- A Shopify store access token
+- An Anthropic API key (for the AI Chat feature on the Pulse page)
+
+### 1. Clone & configure
 
 ```bash
-# 1. Clone the repo
 git clone https://github.com/lamtrinh259/Shopify_AI_assistant.git
 cd Shopify_AI_assistant
-
-# 2. Set your Shopify credentials
-cp .env.example .env
-# Edit .env — set SHOPIFY_ACCESS_TOKEN and SHOPIFY_STORE_URL
-
-# 3. Install dependencies + start everything
-npm run setup
-npm run dev
-
-# 4. Open http://localhost:3000/pulse
 ```
+
+Create a `.env` file in the root:
+
+```dotenv
+SHOPIFY_ACCESS_TOKEN=shpss_your_token_here
+SHOPIFY_STORE_URL=https://your-store.myshopify.com/
+
+# Order simulator (creates fake orders every 60-180 seconds)
+SIMULATOR_ENABLED=true
+SIMULATOR_INTERVAL_MIN=60
+SIMULATOR_INTERVAL_MAX=180
+```
+
+> **Note:** `SHOPIFY_STORE_URL` must include the `https://` prefix.
+
+### 2. Install dependencies
+
+```bash
+npm run setup
+```
+
+This installs frontend (`npm install`) and backend (`pip install -r requirements.txt`) dependencies.
+
+### 3. Start the app
+
+```bash
+npm run dev
+```
+
+This starts both servers simultaneously:
+- **Frontend** → http://localhost:3000
+- **Backend API** → http://localhost:8000
+
+Open http://localhost:3000/pulse to see the AI command center.
+
+On first run, the backend automatically syncs products, orders, and customers from your Shopify store into a local SQLite database (`hackathon.db`). This takes ~30 seconds.
+
+### 4. Enable AI Chat (optional)
+
+The AI Chat on the Pulse page is powered by Claude (Anthropic). To use it:
+
+1. Get an API key from https://console.anthropic.com
+2. Open the app at http://localhost:3000/pulse
+3. Click the **🔑 Add Key** button in the chat panel
+4. Paste your Anthropic API key and press Enter
+
+The key is saved in your browser's `localStorage` — it's never sent anywhere except the local backend proxy, which forwards it directly to Anthropic. You do not need to add it to `.env`.
+
+### Troubleshooting
+
+| Problem | Fix |
+|---|---|
+| `EADDRINUSE :::3000` | Another process is using port 3000. Run `lsof -ti:3000 \| xargs kill -9` then retry. |
+| All data shows `$0.00` | The Shopify sync failed. Delete `hackathon.db` and restart — check terminal for sync errors. |
+| Backend won't start | Make sure `.env` has `SHOPIFY_ACCESS_TOKEN` (not `SHOPIFY_CLIENT_ID`). |
+| AI Chat says "api_key required" | Click 🔑 Add Key in the chat panel and enter your Anthropic API key. |
+| "Using demo data" banner | Backend isn't reachable. Make sure you ran `npm run dev` from the root, not from `frontend/`. |
+
+---
 
 ## Architecture
 
@@ -70,7 +126,7 @@ Your laptop:
 └── .env                     (SHOPIFY_ACCESS_TOKEN + SHOPIFY_STORE_URL)
 ```
 
-Everything runs locally. No external services, no auth setup, no deployment needed.
+Everything runs locally. No external services required (Anthropic key is optional, only needed for AI Chat).
 
 ## Pages
 
