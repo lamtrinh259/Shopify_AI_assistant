@@ -93,21 +93,21 @@ export default function PulsePage() {
         border: `1px solid ${scoreColor}30`,
       }}>
         <div className="px-6 py-5 flex items-center justify-between">
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-5">
             {/* Mini health gauge */}
-            <div className="relative w-20 h-20 flex-shrink-0">
-              <svg width="80" height="80" viewBox="0 0 80 80">
-                <circle cx="40" cy="40" r="34" fill="none" stroke="#1F1F1F" strokeWidth="6"
-                  strokeDasharray={`${Math.PI * 68 * 0.75} ${Math.PI * 68 * 0.25}`}
-                  strokeLinecap="round" transform="rotate(135 40 40)" />
-                <circle cx="40" cy="40" r="34" fill="none" stroke={scoreColor} strokeWidth="6"
-                  strokeDasharray={`${Math.PI * 68 * 0.75} ${Math.PI * 68 * 0.25}`}
-                  strokeDashoffset={Math.PI * 68 * 0.75 * (1 - breakdown.total / 10)}
-                  strokeLinecap="round" transform="rotate(135 40 40)"
+            <div className="relative flex-shrink-0" style={{ width: 72, height: 72 }}>
+              <svg width="72" height="72" viewBox="0 0 72 72">
+                <circle cx="36" cy="36" r="30" fill="none" stroke="#1F1F1F" strokeWidth="5"
+                  strokeDasharray={`${Math.PI * 60 * 0.75} ${Math.PI * 60 * 0.25}`}
+                  strokeLinecap="round" transform="rotate(135 36 36)" />
+                <circle cx="36" cy="36" r="30" fill="none" stroke={scoreColor} strokeWidth="5"
+                  strokeDasharray={`${Math.PI * 60 * 0.75} ${Math.PI * 60 * 0.25}`}
+                  strokeDashoffset={Math.PI * 60 * 0.75 * (1 - breakdown.total / 10)}
+                  strokeLinecap="round" transform="rotate(135 36 36)"
                   style={{ filter: `drop-shadow(0 0 6px ${scoreColor}60)` }} />
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-xl font-bold font-mono" style={{ color: scoreColor }}>{breakdown.total.toFixed(1)}</span>
+                <span className="text-lg font-bold font-mono" style={{ color: scoreColor }}>{breakdown.total.toFixed(1)}</span>
               </div>
             </div>
             <div>
