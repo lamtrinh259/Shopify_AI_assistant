@@ -117,39 +117,14 @@ function loadSavedEvents(): LiveEvent[] {
   return []
 }
 
-const SERVER_DEFAULTS = { revenue: 4280, orders: 23, customers: 312 }
-
 export function useSimulator(intervalMs = 6000, maxEvents = 50) {
-  // Always start with server defaults to avoid hydration mismatch
+  // No localStorage — start fresh every page load to avoid hydration errors
   const [events, setEvents] = useState<LiveEvent[]>([])
-  const [totalRevenue, setTotalRevenue] = useState(SERVER_DEFAULTS.revenue)
-  const [totalOrders, setTotalOrders] = useState(SERVER_DEFAULTS.orders)
-  const [totalCustomers, setTotalCustomers] = useState(SERVER_DEFAULTS.customers)
+  const [totalRevenue, setTotalRevenue] = useState(0)
+  const [totalOrders, setTotalOrders] = useState(0)
+  const [totalCustomers, setTotalCustomers] = useState(0)
   const [isRunning, setIsRunning] = useState(true)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
-
-  // Hydrate from localStorage after mount (client-side only)
-  useEffect(() => {
-    const saved = loadSaved()
-    setTotalRevenue(saved.revenue)
-    setTotalOrders(saved.orders)
-    setTotalCustomers(saved.customers)
-    setEvents(loadSavedEvents())
-  }, [])
-
-  // Persist to localStorage
-  useEffect(() => {
-    localStorage.setItem('pulse-sim', JSON.stringify({
-      revenue: totalRevenue, orders: totalOrders, customers: totalCustomers
-    }))
-  }, [totalRevenue, totalOrders, totalCustomers])
-
-  // Persist events to localStorage
-  useEffect(() => {
-    if (events.length > 0) {
-      localStorage.setItem('pulse-events', JSON.stringify(events.slice(0, 20)))
-    }
-  }, [events])
 
   const addEvent = useCallback(() => {
     const event = generateEvent()

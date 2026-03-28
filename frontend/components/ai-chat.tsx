@@ -74,13 +74,13 @@ function getResponse(input: string, lang: 'en' | 'es'): string {
 }
 
 export default function AiChat({ t }: AiChatProps) {
-  // Always start with empty/default state to match server render, then hydrate from localStorage
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [isTyping, setIsTyping] = useState(false)
   const [lang, setLang] = useState<'en' | 'es'>('en')
   const [apiKey, setApiKey] = useState('')
   const [showKeyInput, setShowKeyInput] = useState(false)
+  const chatHydrated = useRef(false)
 
   // Hydrate from localStorage after mount (client-side only, avoids SSR mismatch)
   useEffect(() => {
@@ -92,10 +92,12 @@ export default function AiChat({ t }: AiChatProps) {
       }
     } catch {}
     setApiKey(localStorage.getItem('anthropic-key') || '')
+    chatHydrated.current = true
   }, [])
 
   // Persist chat to localStorage
   useEffect(() => {
+    if (!chatHydrated.current) return
     if (messages.length > 0) {
       localStorage.setItem('pulse-chat', JSON.stringify(messages))
     } else {

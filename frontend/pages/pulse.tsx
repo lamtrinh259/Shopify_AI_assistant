@@ -85,26 +85,22 @@ export default function PulsePage() {
 
   const revenue = revenueData?.series || MOCK_REVENUE
 
-  // Base data from API + live increments from simulator
+  // Base data from API
   const baseRevenue = revenue.reduce((sum, d) => sum + d.revenue, 0)
   const baseOrders = revenue.reduce((sum, d) => sum + d.orders, 0)
   const baseCustomers = storeData?.customer_count || 15
 
-  // Simulator adds on top of real data
-  const simRevenue = simulator.totalRevenue - 4280
-  const simOrders = simulator.totalOrders - 23
-  const simCustomers = simulator.totalCustomers - 312
-
-  const totalRevenue = baseRevenue + Math.max(0, simRevenue)
-  const totalOrders = baseOrders + Math.max(0, simOrders)
-  const totalCustomers = baseCustomers + Math.max(0, simCustomers)
+  // Simulator starts at 0 — just add its values on top of API base
+  const totalRevenue = baseRevenue + simulator.totalRevenue
+  const totalOrders = baseOrders + simulator.totalOrders
+  const totalCustomers = baseCustomers + simulator.totalCustomers
 
   // Calculate health score from LIVE data
   const last7 = revenue.slice(-7)
   const prev7 = revenue.slice(-14, -7)
   const rev7d = last7.reduce((s, d) => s + d.revenue, 0)
   const revPrev7d = prev7.reduce((s, d) => s + d.revenue, 0) || 1
-  const ordersToday = Math.max(1, Math.max(0, simOrders) + (last7[last7.length - 1]?.orders || 0))
+  const ordersToday = Math.max(1, simulator.totalOrders + (last7[last7.length - 1]?.orders || 0))
   const avgDailyOrders = Math.max(1, Math.round(baseOrders / 30))
 
   const liveStoreData = {
