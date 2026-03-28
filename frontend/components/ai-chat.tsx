@@ -88,6 +88,11 @@ export default function AiChat({ t }: AiChatProps) {
   const [input, setInput] = useState('')
   const [isTyping, setIsTyping] = useState(false)
   const [lang, setLang] = useState<'en' | 'es'>('en')
+  const [apiKey, setApiKey] = useState(() => {
+    if (typeof window === 'undefined') return ''
+    return localStorage.getItem('anthropic-key') || ''
+  })
+  const [showKeyInput, setShowKeyInput] = useState(false)
 
   // Persist chat to localStorage
   useEffect(() => {
@@ -111,6 +116,12 @@ export default function AiChat({ t }: AiChatProps) {
 
   const quickPrompts = lang === 'es' ? QUICK_PROMPTS_ES : QUICK_PROMPTS_EN
 
+  const saveApiKey = (key: string) => {
+    setApiKey(key)
+    localStorage.setItem('anthropic-key', key)
+    setShowKeyInput(false)
+  }
+
   const sendMessage = async (text: string) => {
     if (!text.trim()) return
 
@@ -124,10 +135,26 @@ export default function AiChat({ t }: AiChatProps) {
     setInput('')
     setIsTyping(true)
 
-    // Simulate AI thinking delay
-    await new Promise((r) => setTimeout(r, 800 + Math.random() * 1200))
+    let response: string
 
-    const response = getResponse(text, lang)
+    if (apiKey) {
+      // Use real Claude API via backend proxy
+      try {
+        const res = await fetch('http://localhost:8000/ai/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: text, api_key: apiKey, lang }),
+        })
+        const data = await res.json()
+        response = data.response || data.error || 'No response'
+      } catch {
+        response = getResponse(text, lang)
+      }
+    } else {
+      await new Promise((r) => setTimeout(r, 800 + Math.random() * 1200))
+      response = getResponse(text, lang)
+    }
+
     const aiMsg: Message = {
       id: `a-${Date.now()}`,
       role: 'assistant',
@@ -153,15 +180,61 @@ export default function AiChat({ t }: AiChatProps) {
           <h3 className="text-sm font-medium text-text-primary">{t('aiCeo')}</h3>
           <span className="text-xs text-text-tertiary px-1.5 py-0.5 bg-surface-2 rounded">Claude</span>
         </div>
-        {messages.length > 0 && (
+        <div className="flex items-center gap-1.5">
           <button
-            onClick={() => setMessages([])}
-            className="text-[10px] text-text-tertiary hover:text-text-secondary px-2 py-1 rounded hover:bg-surface-2 transition-colors font-mono"
+            onClick={() => setShowKeyInput(!showKeyInput)}
+            className={`text-[10px] px-2 py-1 rounded transition-colors font-mono ${
+              apiKey ? 'text-[#00E676] bg-[#00E676]/10' : 'text-text-tertiary hover:text-paint-yellow hover:bg-surface-2'
+            }`}
+            title={apiKey ? 'API key configured' : 'Add Anthropic API key'}
           >
-            Clear
+            {apiKey ? '🔑 Live' : '🔑 Add Key'}
           </button>
-        )}
+          {messages.length > 0 && (
+            <button
+              onClick={() => setMessages([])}
+              className="text-[10px] text-text-tertiary hover:text-text-secondary px-2 py-1 rounded hover:bg-surface-2 transition-colors font-mono"
+            >
+              Clear
+            </button>
+          )}
+        </div>
       </div>
+
+      {/* API Key Input */}
+      {showKeyInput && (
+        <div className="mb-3 p-2.5 bg-surface-2 border border-border rounded-lg">
+          <p className="text-[10px] text-text-tertiary mb-1.5">Anthropic API Key</p>
+          <div className="flex gap-1.5">
+            <input
+              type="password"
+              placeholder="sk-ant-..."
+              defaultValue={apiKey}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') saveApiKey((e.target as HTMLInputElement).value)
+              }}
+              className="flex-1 px-2 py-1.5 bg-surface-0 border border-border rounded text-[11px] text-text-primary placeholder-text-tertiary focus:outline-none focus:border-paint-yellow/30 font-mono"
+            />
+            <button
+              onClick={(e) => {
+                const input = (e.currentTarget.parentElement?.querySelector('input') as HTMLInputElement)
+                if (input) saveApiKey(input.value)
+              }}
+              className="px-2.5 py-1.5 bg-paint-yellow text-surface-0 rounded text-[10px] font-bold"
+            >
+              Save
+            </button>
+          </div>
+          {apiKey && (
+            <button
+              onClick={() => { setApiKey(''); localStorage.removeItem('anthropic-key'); setShowKeyInput(false) }}
+              className="text-[10px] text-[#FF3D57] mt-1.5 hover:underline"
+            >
+              Remove key
+            </button>
+          )}
+        </div>
+      )}
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto space-y-3 mb-3 min-h-[120px] max-h-[300px]">

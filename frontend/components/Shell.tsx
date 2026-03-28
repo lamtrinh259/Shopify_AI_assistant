@@ -132,7 +132,6 @@ const navSections: NavSection[] = [
 export default function Shell({ title, children }: ShellProps) {
   const router = useRouter()
   const [mounted, setMounted] = useState(false)
-
   useEffect(() => {
     setMounted(true)
   }, [])
@@ -232,6 +231,7 @@ export default function Shell({ title, children }: ShellProps) {
             )}
           </div>
         </header>
+
 
         {/* Content */}
         <main className="flex-1 overflow-y-auto p-6">{children}</main>
