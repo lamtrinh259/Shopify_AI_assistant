@@ -89,17 +89,26 @@ export default function PulsePage() {
 
   const revenue = revenueData?.series || MOCK_REVENUE
 
-  // Use real store data when available, simulator adds on top
-  const realRevenue = revenue.reduce((sum, d) => sum + d.revenue, 0)
-  const realOrders = revenue.reduce((sum, d) => sum + d.orders, 0)
-  const realCustomers = storeData?.customer_count || 15
+  // Base data from API + live increments from simulator
+  const baseRevenue = revenue.reduce((sum, d) => sum + d.revenue, 0)
+  const baseOrders = revenue.reduce((sum, d) => sum + d.orders, 0)
+  const baseCustomers = storeData?.customer_count || 15
+
+  // Simulator adds on top of real data
+  const simRevenue = simulator.totalRevenue - 4280 // subtract default to get only new revenue
+  const simOrders = simulator.totalOrders - 23
+  const simCustomers = simulator.totalCustomers - 312
+
+  const totalRevenue = baseRevenue + Math.max(0, simRevenue)
+  const totalOrders = baseOrders + Math.max(0, simOrders)
+  const totalCustomers = baseCustomers + Math.max(0, simCustomers)
 
   const liveKpiData = {
     ...MOCK_KPI_DATA,
-    todayRevenue: realRevenue > 0 ? realRevenue : simulator.totalRevenue,
-    ordersToday: realOrders > 0 ? realOrders : simulator.totalOrders,
-    activeCustomers: realCustomers > 0 ? realCustomers : simulator.totalCustomers,
-    avgOrderValue: realOrders > 0 ? Math.round((realRevenue / realOrders) * 100) / 100 : 186.09,
+    todayRevenue: totalRevenue,
+    ordersToday: totalOrders,
+    activeCustomers: totalCustomers,
+    avgOrderValue: totalOrders > 0 ? Math.round((totalRevenue / totalOrders) * 100) / 100 : 182.13,
   }
 
   // Merge simulator events with initial mock events
