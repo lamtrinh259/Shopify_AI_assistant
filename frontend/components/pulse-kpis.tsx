@@ -101,7 +101,7 @@ export default function PulseKPIs({ data, t, loading }: PulseKPIsProps) {
           </p>
           <div className="flex items-end justify-between">
             <div>
-              <span className="text-2xl font-bold text-text-primary font-mono">
+              <span className="text-2xl font-bold text-text-primary font-mono transition-all duration-500">
                 {kpi.value}
               </span>
               <div className="mt-1.5">

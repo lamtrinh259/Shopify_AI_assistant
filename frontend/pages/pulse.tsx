@@ -19,6 +19,7 @@ import {
 } from '../lib/health-algorithm'
 import { useApi } from '../hooks/useApi'
 import { useRevenue } from '../hooks/useAnalytics'
+import { useSimulator } from '../hooks/useSimulator'
 import { api } from '../lib/api'
 import { formatCurrency } from '../lib/utils'
 import type { LiveEvent, RevenueDataPoint } from '../lib/types'
@@ -69,7 +70,10 @@ export default function PulsePage() {
 
   const isMock = !!(storeError || revenueError)
 
-  // Generate mock events client-side to avoid hydration mismatch
+  // Live event simulator
+  const simulator = useSimulator(6000, 30)
+
+  // Generate initial mock events + start loading
   useEffect(() => {
     setMockEvents(generateMockEvents())
     const timer = setTimeout(() => setLoading(false), 800)
@@ -82,6 +86,20 @@ export default function PulsePage() {
 
   const revenue = revenueData?.series || MOCK_REVENUE
   const alerts = generateMockAlerts(t)
+
+  // Live KPI data from simulator
+  const liveKpiData = {
+    ...MOCK_KPI_DATA,
+    todayRevenue: simulator.totalRevenue,
+    ordersToday: simulator.totalOrders,
+    activeCustomers: simulator.totalCustomers,
+    avgOrderValue: simulator.totalOrders > 0 ? Math.round((simulator.totalRevenue / simulator.totalOrders) * 100) / 100 : 186.09,
+  }
+
+  // Merge simulator events with initial mock events
+  const allEvents = simulator.events.length > 0
+    ? simulator.events
+    : (mockEvents.length > 0 ? mockEvents : undefined)
 
   const scoreColor = getScoreColor(breakdown.total)
 
@@ -134,7 +152,7 @@ export default function PulsePage() {
 
       {/* KPIs */}
       <div className="mb-6">
-        <PulseKPIs data={MOCK_KPI_DATA} t={t} loading={loading} />
+        <PulseKPIs data={liveKpiData} t={t} loading={loading} />
       </div>
 
       {/* Row 1: Health Score + Alerts + Live Feed */}
@@ -167,7 +185,7 @@ export default function PulsePage() {
         {/* Live Feed */}
         <div className="col-span-3 stagger-4">
           <Card className="h-full">
-            <LiveFeed maxEvents={10} mockEvents={mockEvents.length > 0 ? mockEvents : undefined} />
+            <LiveFeed maxEvents={10} mockEvents={allEvents} />
           </Card>
         </div>
       </div>

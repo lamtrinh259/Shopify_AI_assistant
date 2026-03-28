@@ -68,7 +68,9 @@ interface LiveFeedProps {
 
 export default function LiveFeed({ maxEvents = 20, mockEvents }: LiveFeedProps) {
   const { events: liveEvents, connected } = useEventStream(maxEvents)
-  const events = mockEvents && liveEvents.length === 0 ? mockEvents : liveEvents
+  const hasMockEvents = mockEvents && mockEvents.length > 0
+  const events = hasMockEvents && liveEvents.length === 0 ? mockEvents : liveEvents
+  const isConnected = connected || hasMockEvents
 
   return (
     <div className="h-full flex flex-col">
@@ -78,11 +80,11 @@ export default function LiveFeed({ maxEvents = 20, mockEvents }: LiveFeedProps) 
         <div className="flex items-center gap-1.5">
           <span
             className={`w-1.5 h-1.5 rounded-full ${
-              connected ? 'bg-status-success' : 'bg-status-error'
+              isConnected ? 'bg-paint-green animate-pulse' : 'bg-status-error'
             }`}
           />
           <span className="text-xs text-text-tertiary">
-            {connected ? 'Connected' : 'Offline'}
+            {isConnected ? 'Live' : 'Offline'}
           </span>
         </div>
       </div>
