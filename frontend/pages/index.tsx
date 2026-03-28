@@ -25,12 +25,14 @@ const MOCK_STORE: StoreInfo = {
 
 function generateMockRevenue(): RevenueDataPoint[] {
   const data: RevenueDataPoint[] = []
-  const now = new Date()
+  // Use a fixed anchor date so server and client produce identical output
+  const anchor = new Date('2026-03-28T00:00:00Z')
   for (let i = 29; i >= 0; i--) {
-    const d = new Date(now)
+    const d = new Date(anchor)
     d.setDate(d.getDate() - i)
-    const base = 2800 + Math.random() * 1200
-    const orders = 18 + Math.floor(Math.random() * 15)
+    // Deterministic values based on index — no Math.random()
+    const base = 2800 + ((i * 137 + 41) % 120) * 10
+    const orders = 18 + ((i * 7 + 3) % 15)
     data.push({
       date: d.toISOString().split('T')[0],
       revenue: Math.round(base * 100) / 100,
@@ -51,15 +53,17 @@ const MOCK_TOP_PRODUCTS: TopProduct[] = [
   { id: '5', title: 'Selling Plans Ski Wax', revenue: 3120, units_sold: 78 },
 ]
 
+// Use fixed timestamps so server and client render identically (no Date.now())
+const MOCK_EVENT_ANCHOR = '2026-03-28T10:00:00Z'
 const MOCK_EVENTS: LiveEvent[] = [
-  { id: '1', event_type: 'new_order', payload: { order_number: '1042', total_price: 259.99 }, created_at: new Date(Date.now() - 60000).toISOString() },
-  { id: '2', event_type: 'customer_created', payload: { email: 'sarah@example.com' }, created_at: new Date(Date.now() - 180000).toISOString() },
-  { id: '3', event_type: 'new_order', payload: { order_number: '1041', total_price: 149.50 }, created_at: new Date(Date.now() - 300000).toISOString() },
-  { id: '4', event_type: 'inventory_change', payload: { product_title: 'Complete Snowboard' }, created_at: new Date(Date.now() - 420000).toISOString() },
-  { id: '5', event_type: 'new_order', payload: { order_number: '1040', total_price: 89.99 }, created_at: new Date(Date.now() - 600000).toISOString() },
-  { id: '6', event_type: 'product_update', payload: { title: 'Hydrogen Snowboard' }, created_at: new Date(Date.now() - 900000).toISOString() },
-  { id: '7', event_type: 'refund_issued', payload: { order_number: '1035' }, created_at: new Date(Date.now() - 1200000).toISOString() },
-  { id: '8', event_type: 'new_order', payload: { order_number: '1039', total_price: 324.00 }, created_at: new Date(Date.now() - 1500000).toISOString() },
+  { id: '1', event_type: 'new_order', payload: { order_number: '1042', total_price: 259.99 }, created_at: new Date(new Date(MOCK_EVENT_ANCHOR).getTime() - 60000).toISOString() },
+  { id: '2', event_type: 'customer_created', payload: { email: 'sarah@example.com' }, created_at: new Date(new Date(MOCK_EVENT_ANCHOR).getTime() - 180000).toISOString() },
+  { id: '3', event_type: 'new_order', payload: { order_number: '1041', total_price: 149.50 }, created_at: new Date(new Date(MOCK_EVENT_ANCHOR).getTime() - 300000).toISOString() },
+  { id: '4', event_type: 'inventory_change', payload: { product_title: 'Complete Snowboard' }, created_at: new Date(new Date(MOCK_EVENT_ANCHOR).getTime() - 420000).toISOString() },
+  { id: '5', event_type: 'new_order', payload: { order_number: '1040', total_price: 89.99 }, created_at: new Date(new Date(MOCK_EVENT_ANCHOR).getTime() - 600000).toISOString() },
+  { id: '6', event_type: 'product_update', payload: { title: 'Hydrogen Snowboard' }, created_at: new Date(new Date(MOCK_EVENT_ANCHOR).getTime() - 900000).toISOString() },
+  { id: '7', event_type: 'refund_issued', payload: { order_number: '1035' }, created_at: new Date(new Date(MOCK_EVENT_ANCHOR).getTime() - 1200000).toISOString() },
+  { id: '8', event_type: 'new_order', payload: { order_number: '1039', total_price: 324.00 }, created_at: new Date(new Date(MOCK_EVENT_ANCHOR).getTime() - 1500000).toISOString() },
 ]
 
 // ── Page Component ─────────────────────────────────────────────────────────
