@@ -261,17 +261,7 @@ export default function AnomaliesPage() {
   return (
     <Shell title="Anomalies">
       <div className="space-y-6">
-        {/* Header */}
-        <div>
-          <h2 className="text-base font-semibold text-text-primary tracking-tight">
-            Live Anomaly Detector
-          </h2>
-          <p className="text-xs text-text-tertiary mt-1">
-            Real-time order pattern analysis against historical baselines
-          </p>
-        </div>
-
-        {/* Status Indicator */}
+        {/* Status Indicator — this IS the header */}
         <StatusIndicator isAnomaly={isAnomaly} />
 
         {/* KPI Cards */}

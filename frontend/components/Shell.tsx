@@ -60,6 +60,18 @@ const navSections: NavSection[] = [
         ),
       },
       {
+        href: '/forecast',
+        label: 'Revenue Forecast',
+        description: '30-day projection',
+        icon: (
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M2 12l4-3 3 2 5-7" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M11 4h3v3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M10 8l4-4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeDasharray="2 2" />
+          </svg>
+        ),
+      },
+      {
         href: '/anomalies',
         label: 'Anomaly Radar',
         description: 'Pattern detection',

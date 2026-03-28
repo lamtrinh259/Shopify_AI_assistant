@@ -236,15 +236,29 @@ export default function PredictionsPage() {
   return (
     <Shell title="Inventory Predictions">
       <div className="space-y-6">
-        {/* Header */}
-        <div>
-          <h2 className="text-base font-semibold text-text-primary tracking-tight">
-            Stockout Predictor
-          </h2>
-          <p className="text-xs text-text-tertiary mt-1">
-            AI-powered inventory depletion forecasts based on 7-day sales velocity
-          </p>
-        </div>
+        {/* AI Insight Summary */}
+        {!loading && criticalCount > 0 && (
+          <div className="bg-paint-red/5 border border-paint-red/20 rounded-card p-4">
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 rounded-lg bg-paint-red/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <svg width="16" height="16" viewBox="0 0 16 16" className="text-paint-red">
+                  <path d="M8 1.5L1 14h14L8 1.5z" stroke="currentColor" strokeWidth="1.3" fill="none" strokeLinejoin="round" />
+                  <path d="M8 6v3.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+                  <circle cx="8" cy="11.5" r="0.7" fill="currentColor" />
+                </svg>
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-text-primary font-headline">
+                  {criticalCount} product{criticalCount > 1 ? 's' : ''} will stock out within 48 hours
+                </p>
+                <p className="text-xs text-text-secondary mt-1">
+                  {predictions.filter(p => p.status === 'critical').map(p => p.product).join(' and ')} need immediate restock.
+                  At current velocity, you'll lose ~${Math.round(predictions.filter(p => p.status === 'critical').reduce((s, p) => s + p.dailyVelocity * 45, 0))}/day in missed sales.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* KPI Row */}
         <div className="grid grid-cols-3 gap-4">

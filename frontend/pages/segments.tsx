@@ -195,6 +195,27 @@ export default function SegmentsPage() {
   return (
     <Shell title="Segments">
       <div className="space-y-6">
+        {/* AI Insight */}
+        <div className="bg-paint-yellow/5 border border-paint-yellow/20 rounded-card p-4">
+          <div className="flex items-start gap-3">
+            <div className="w-8 h-8 rounded-lg bg-paint-yellow/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <svg width="16" height="16" viewBox="0 0 16 16" className="text-paint-yellow">
+                <circle cx="8" cy="5" r="2.5" stroke="currentColor" strokeWidth="1.2" fill="none" />
+                <path d="M3 13c0-2.8 2.2-5 5-5s5 2.2 5 5" stroke="currentColor" strokeWidth="1.2" fill="none" />
+              </svg>
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-text-primary font-headline">
+                {segmentCounts['At Risk']} customers at risk of churning
+              </p>
+              <p className="text-xs text-text-secondary mt-1">
+                These customers bought 3+ times but haven't returned in 45+ days. A targeted 15% win-back email could recover ~$
+                {Math.round(customers.filter(c => c.segment === 'At Risk').reduce((s, c) => s + c.total_spent * 0.15, 0)).toLocaleString()} in revenue.
+              </p>
+            </div>
+          </div>
+        </div>
+
         {/* KPI Row */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <KPICard title="Total Customers" value={totalCustomers} change={8.2} />
