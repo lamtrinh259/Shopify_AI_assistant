@@ -89,7 +89,7 @@ const navSections: NavSection[] = [
     title: 'Store Data',
     items: [
       {
-        href: '/',
+        href: '/overview',
         label: 'Overview',
         description: 'Revenue & trends',
         icon: (
@@ -167,9 +167,9 @@ export default function Shell({ title, children }: ShellProps) {
                       key={item.href}
                       href={item.href}
                       className={cn(
-                        'flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-all duration-150 ease-out group',
+                        'flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-all duration-150 ease-out group relative',
                         active
-                          ? 'bg-paint-yellow/10 text-paint-yellow'
+                          ? 'bg-paint-yellow/10 text-paint-yellow nav-active-glow'
                           : 'text-text-secondary hover:text-text-primary hover:bg-surface-2'
                       )}
                     >

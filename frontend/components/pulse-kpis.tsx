@@ -94,14 +94,14 @@ export default function PulseKPIs({ data, t, loading }: PulseKPIsProps) {
       {kpis.map((kpi, i) => (
         <div
           key={i}
-          className="bg-surface-1 border border-border rounded-lg p-4 hover:border-border-hover transition-all duration-150 group"
+          className={`bg-surface-1 border border-border rounded-card p-4 hover-lift group stagger-${i + 1}`}
         >
           <p className="text-xs text-text-tertiary mb-2 group-hover:text-text-secondary transition-colors">
             {kpi.title}
           </p>
           <div className="flex items-end justify-between">
             <div>
-              <span className="text-xl font-semibold text-text-primary font-mono">
+              <span className="text-2xl font-bold text-text-primary font-mono">
                 {kpi.value}
               </span>
               <div className="mt-1.5">

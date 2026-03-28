@@ -108,7 +108,7 @@ export default function PulsePage() {
       {/* Row 1: Health Score + Alerts */}
       <div className="grid grid-cols-12 gap-4 mb-4">
         {/* Health Score + Breakdown */}
-        <div className="col-span-4">
+        <div className="col-span-4 stagger-2">
           <Card className="h-full">
             <div className="flex items-center justify-between mb-1">
               <h3 className="text-sm font-medium text-text-primary">{t('healthScore')}</h3>
@@ -123,7 +123,7 @@ export default function PulsePage() {
         </div>
 
         {/* Smart Alerts */}
-        <div className="col-span-5">
+        <div className="col-span-5 stagger-3">
           <Card className="h-full">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-sm font-medium text-text-primary">{t('smartAlerts')}</h3>
@@ -136,7 +136,7 @@ export default function PulsePage() {
         </div>
 
         {/* Live Feed */}
-        <div className="col-span-3">
+        <div className="col-span-3 stagger-4">
           <Card className="h-full">
             <LiveFeed maxEvents={10} mockEvents={mockEvents.length > 0 ? mockEvents : undefined} />
           </Card>
