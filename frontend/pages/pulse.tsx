@@ -100,16 +100,6 @@ export default function PulsePage() {
         <LangToggle lang={lang} onToggle={setLang} />
       </div>
 
-      {/* Mock data banner */}
-      {isMock && !loading && (
-        <div className="bg-status-warning/5 border border-status-warning/15 rounded-lg px-4 py-2 mb-4 flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-status-warning" />
-          <span className="text-xs text-status-warning">
-            Demo mode — connect backend for live data
-          </span>
-        </div>
-      )}
-
       {/* KPIs */}
       <div className="mb-5">
         <PulseKPIs data={MOCK_KPI_DATA} t={t} loading={loading} />

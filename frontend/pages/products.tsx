@@ -193,14 +193,6 @@ export default function ProductsPage() {
 
   return (
     <Shell title="Products">
-      {isMock && (
-        <div className="bg-status-warning/10 border border-status-warning/20 rounded-lg px-4 py-2 mb-4">
-          <span className="text-xs text-status-warning">
-            Using demo data — connect to The Pipe for live data
-          </span>
-        </div>
-      )}
-
       <Card>
         {/* Search + Tabs */}
         <div className="mb-4">
