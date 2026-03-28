@@ -90,20 +90,24 @@ export default function PulsePage() {
   const baseOrders = revenue.reduce((sum, d) => sum + d.orders, 0)
   const baseCustomers = storeData?.customer_count || 15
 
-  // Track simulator starting values to compute delta
+  // Track simulator starting values to compute delta (set after mount only)
   const simStartRef = React.useRef<{ revenue: number; orders: number; customers: number } | null>(null)
-  if (simStartRef.current === null) {
+  const [simMounted, setSimMounted] = React.useState(false)
+
+  React.useEffect(() => {
     simStartRef.current = {
       revenue: simulator.totalRevenue,
       orders: simulator.totalOrders,
       customers: simulator.totalCustomers,
     }
-  }
+    setSimMounted(true)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
-  // Delta = what simulator added SINCE page load
-  const deltaRevenue = simulator.totalRevenue - simStartRef.current.revenue
-  const deltaOrders = simulator.totalOrders - simStartRef.current.orders
-  const deltaCustomers = simulator.totalCustomers - simStartRef.current.customers
+  // Delta = what simulator added SINCE page load (0 until mounted)
+  const deltaRevenue = simMounted && simStartRef.current ? simulator.totalRevenue - simStartRef.current.revenue : 0
+  const deltaOrders = simMounted && simStartRef.current ? simulator.totalOrders - simStartRef.current.orders : 0
+  const deltaCustomers = simMounted && simStartRef.current ? simulator.totalCustomers - simStartRef.current.customers : 0
 
   const totalRevenue = baseRevenue + Math.max(0, deltaRevenue)
   const totalOrders = baseOrders + Math.max(0, deltaOrders)
