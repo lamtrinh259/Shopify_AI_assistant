@@ -82,7 +82,7 @@ export default function AiChat({ t }: AiChatProps) {
   const [showKeyInput, setShowKeyInput] = useState(false)
   const chatHydrated = useRef(false)
 
-  // Load from localStorage after mount only
+  // Hydrate from localStorage after mount (client-side only, avoids SSR mismatch)
   useEffect(() => {
     try {
       const saved = localStorage.getItem('pulse-chat')
