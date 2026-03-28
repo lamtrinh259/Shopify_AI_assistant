@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { cn } from '../lib/utils'
@@ -10,6 +10,16 @@ interface ShellProps {
 }
 
 const navItems = [
+  {
+    href: '/pulse',
+    label: 'Store Pulse',
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.3" fill="none" />
+        <path d="M4 8h2l1.5-3 2 6L11 8h1" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+      </svg>
+    ),
+  },
   {
     href: '/',
     label: 'Dashboard',
@@ -48,6 +58,14 @@ const navItems = [
 
 export default function Shell({ title, children }: ShellProps) {
   const router = useRouter()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  // Prevent hydration mismatch: only show STORE_URL after mount
+  const displayStoreUrl = mounted ? STORE_URL : ''
 
   return (
     <div className="flex h-screen bg-surface-0">
@@ -56,9 +74,10 @@ export default function Shell({ title, children }: ShellProps) {
         {/* Logo */}
         <div className="px-4 py-4 border-b border-border">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-accent" />
-            <span className="text-sm font-semibold text-text-primary">Shopify App</span>
+            <span className="w-2.5 h-2.5 rounded-full bg-accent animate-pulse" />
+            <span className="text-sm font-bold text-text-primary tracking-tight">Store Pulse</span>
           </div>
+          <span className="text-xs text-text-tertiary mt-0.5 block">AI Store CEO</span>
         </div>
 
         {/* Navigation */}
@@ -88,9 +107,9 @@ export default function Shell({ title, children }: ShellProps) {
         {/* Footer */}
         <div className="px-4 py-3 border-t border-border">
           <div className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-status-success" />
+            <span className={`w-1.5 h-1.5 rounded-full ${displayStoreUrl ? 'bg-status-success' : 'bg-status-warning'}`} />
             <span className="text-xs text-text-tertiary truncate">
-              {STORE_URL || 'No store connected'}
+              {displayStoreUrl || 'No store connected'}
             </span>
           </div>
         </div>
@@ -101,9 +120,9 @@ export default function Shell({ title, children }: ShellProps) {
         {/* Topbar */}
         <header className="h-12 bg-surface-1 border-b border-border flex items-center justify-between px-5 flex-shrink-0">
           <h1 className="text-sm font-medium text-text-primary">{title}</h1>
-          {STORE_URL && (
+          {mounted && displayStoreUrl && (
             <a
-              href={`${STORE_URL}/admin`}
+              href={`${displayStoreUrl}/admin`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-xs text-text-tertiary hover:text-text-secondary transition-colors duration-150 ease-out"
