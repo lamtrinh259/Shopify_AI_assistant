@@ -11,9 +11,9 @@ export default function LangToggle({ lang, onToggle }: LangToggleProps) {
     <div className="flex items-center bg-surface-2 rounded-md p-0.5 border border-border">
       <button
         onClick={() => onToggle('en')}
-        className={`px-2.5 py-1 text-xs font-medium rounded transition-all duration-150 ${
+        className={`px-2.5 py-1 text-xs font-bold rounded transition-all duration-150 font-mono ${
           lang === 'en'
-            ? 'bg-accent text-surface-0'
+            ? 'bg-paint-yellow text-surface-0'
             : 'text-text-tertiary hover:text-text-secondary'
         }`}
       >
@@ -21,9 +21,9 @@ export default function LangToggle({ lang, onToggle }: LangToggleProps) {
       </button>
       <button
         onClick={() => onToggle('es')}
-        className={`px-2.5 py-1 text-xs font-medium rounded transition-all duration-150 ${
+        className={`px-2.5 py-1 text-xs font-bold rounded transition-all duration-150 font-mono ${
           lang === 'es'
-            ? 'bg-accent text-surface-0'
+            ? 'bg-paint-yellow text-surface-0'
             : 'text-text-tertiary hover:text-text-secondary'
         }`}
       >

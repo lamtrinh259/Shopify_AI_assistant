@@ -88,12 +88,12 @@ export default function PulsePage() {
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
-            <h2 className="text-xl font-bold text-text-primary tracking-tight">
+            <span className="w-2.5 h-2.5 rounded-full bg-paint-yellow animate-pulse" />
+            <h2 className="text-xl font-bold text-text-primary tracking-tight font-headline">
               {t('storePulse')}
             </h2>
           </div>
-          <span className="text-xs text-text-tertiary px-2 py-0.5 bg-surface-2 rounded-full">
+          <span className="text-xs text-paint-yellow/70 px-2 py-0.5 bg-paint-yellow/10 rounded-full font-mono font-medium">
             AI CEO
           </span>
         </div>

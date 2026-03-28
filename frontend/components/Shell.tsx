@@ -104,12 +104,12 @@ export default function Shell({ title, children }: ShellProps) {
       {/* Sidebar */}
       <aside className="w-60 bg-surface-1 border-r border-border flex flex-col flex-shrink-0">
         {/* Logo */}
-        <div className="px-4 py-4 border-b border-border">
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-accent animate-pulse" />
-            <span className="text-sm font-bold text-text-primary tracking-tight">Store Pulse</span>
+        <div className="px-5 py-4 border-b border-border">
+          <div className="flex items-center gap-2.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-paint-yellow animate-pulse" />
+            <span className="text-sm font-bold text-text-primary tracking-tight font-headline">Store Pulse</span>
           </div>
-          <span className="text-xs text-text-tertiary mt-0.5 block">AI Store CEO</span>
+          <span className="text-xs text-text-tertiary mt-1 block font-mono">AI Store CEO</span>
         </div>
 
         {/* Navigation */}
@@ -151,7 +151,7 @@ export default function Shell({ title, children }: ShellProps) {
       <div className="flex-1 flex flex-col min-w-0">
         {/* Topbar */}
         <header className="h-12 bg-surface-1 border-b border-border flex items-center justify-between px-5 flex-shrink-0">
-          <h1 className="text-sm font-medium text-text-primary">{title}</h1>
+          <h1 className="text-sm font-semibold text-text-primary font-headline tracking-tight">{title}</h1>
           {mounted && displayStoreUrl && (
             <a
               href={`${displayStoreUrl}/admin`}

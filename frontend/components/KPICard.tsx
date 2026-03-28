@@ -11,12 +11,12 @@ interface KPICardProps {
 
 export default function KPICard({ title, value, change, prefix, suffix }: KPICardProps) {
   return (
-    <div className="bg-surface-1 border border-border rounded-lg p-4">
-      <p className="text-xs text-text-tertiary mb-2">{title}</p>
+    <div className="bg-surface-1 border border-border rounded-card p-4 pollock-glow">
+      <p className="text-label mb-2">{title}</p>
       <div className="flex items-baseline gap-1">
-        {prefix && <span className="text-lg text-text-secondary">{prefix}</span>}
-        <span className="text-2xl font-semibold text-text-primary">{value}</span>
-        {suffix && <span className="text-lg text-text-secondary">{suffix}</span>}
+        {prefix && <span className="text-lg text-text-secondary font-mono">{prefix}</span>}
+        <span className="text-2xl font-bold text-text-primary font-mono">{value}</span>
+        {suffix && <span className="text-lg text-text-secondary font-mono">{suffix}</span>}
       </div>
       {change !== undefined && (
         <div className="flex items-center gap-1 mt-2">

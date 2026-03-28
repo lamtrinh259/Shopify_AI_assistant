@@ -76,11 +76,11 @@ export function getScoreLabel(score: number): string {
 }
 
 export function getScoreColor(score: number): string {
-  if (score >= 8.5) return '#00FF94'
-  if (score >= 7) return '#00FF94'
-  if (score >= 5) return '#FFB224'
-  if (score >= 3) return '#FF8C00'
-  return '#FF4444'
+  if (score >= 8.5) return '#F0B90B'
+  if (score >= 7) return '#00E676'
+  if (score >= 5) return '#FF9100'
+  if (score >= 3) return '#FF3D57'
+  return '#FF3D57'
 }
 
 // Mock store data for demo — gives a score around 6.9 (FAIR)
