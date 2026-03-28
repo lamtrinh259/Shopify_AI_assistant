@@ -145,9 +145,10 @@ export default function OrdersPage() {
     .filter((e) => e.event_type === 'new_order')
     .map((e) => String(e.payload.order_number))
 
-  const isMock = !!error || !apiData
-  const orders = apiData?.data || MOCK_ORDERS
-  const totalPages = apiData?.pages || 1
+  const hasRealData = apiData && apiData.data && apiData.data.length > 0
+  const isMock = !!error || !hasRealData
+  const orders = hasRealData ? apiData.data : MOCK_ORDERS
+  const totalPages = hasRealData ? apiData.pages : 1
 
   // Client-side filtering for mock data
   const filtered = isMock

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Shell from '../components/Shell'
 import KPICard from '../components/KPICard'
 import Card from '../components/ui/Card'
@@ -53,33 +53,42 @@ const MOCK_TOP_PRODUCTS: TopProduct[] = [
   { id: '5', title: 'Selling Plans Ski Wax', revenue: 3120, units_sold: 78 },
 ]
 
-// Use fixed timestamps so server and client render identically (no Date.now())
-const MOCK_EVENT_ANCHOR = '2026-03-28T10:00:00Z'
-const MOCK_EVENTS: LiveEvent[] = [
-  { id: '1', event_type: 'new_order', payload: { order_number: '1042', total_price: 259.99 }, created_at: new Date(new Date(MOCK_EVENT_ANCHOR).getTime() - 60000).toISOString() },
-  { id: '2', event_type: 'customer_created', payload: { email: 'sarah@example.com' }, created_at: new Date(new Date(MOCK_EVENT_ANCHOR).getTime() - 180000).toISOString() },
-  { id: '3', event_type: 'new_order', payload: { order_number: '1041', total_price: 149.50 }, created_at: new Date(new Date(MOCK_EVENT_ANCHOR).getTime() - 300000).toISOString() },
-  { id: '4', event_type: 'inventory_change', payload: { product_title: 'Complete Snowboard' }, created_at: new Date(new Date(MOCK_EVENT_ANCHOR).getTime() - 420000).toISOString() },
-  { id: '5', event_type: 'new_order', payload: { order_number: '1040', total_price: 89.99 }, created_at: new Date(new Date(MOCK_EVENT_ANCHOR).getTime() - 600000).toISOString() },
-  { id: '6', event_type: 'product_update', payload: { title: 'Hydrogen Snowboard' }, created_at: new Date(new Date(MOCK_EVENT_ANCHOR).getTime() - 900000).toISOString() },
-  { id: '7', event_type: 'refund_issued', payload: { order_number: '1035' }, created_at: new Date(new Date(MOCK_EVENT_ANCHOR).getTime() - 1200000).toISOString() },
-  { id: '8', event_type: 'new_order', payload: { order_number: '1039', total_price: 324.00 }, created_at: new Date(new Date(MOCK_EVENT_ANCHOR).getTime() - 1500000).toISOString() },
-]
+// Mock events generated client-side to avoid hydration mismatch with timestamps
+function generateDashboardMockEvents(): LiveEvent[] {
+  const now = Date.now()
+  return [
+    { id: '1', event_type: 'new_order', payload: { order_number: '1042', total_price: 259.99 }, created_at: new Date(now - 60000).toISOString() },
+    { id: '2', event_type: 'customer_created', payload: { email: 'sarah@example.com' }, created_at: new Date(now - 180000).toISOString() },
+    { id: '3', event_type: 'new_order', payload: { order_number: '1041', total_price: 149.50 }, created_at: new Date(now - 300000).toISOString() },
+    { id: '4', event_type: 'inventory_change', payload: { product_title: 'Complete Snowboard' }, created_at: new Date(now - 420000).toISOString() },
+    { id: '5', event_type: 'new_order', payload: { order_number: '1040', total_price: 89.99 }, created_at: new Date(now - 600000).toISOString() },
+    { id: '6', event_type: 'product_update', payload: { title: 'Hydrogen Snowboard' }, created_at: new Date(now - 900000).toISOString() },
+    { id: '7', event_type: 'refund_issued', payload: { order_number: '1035' }, created_at: new Date(now - 1200000).toISOString() },
+    { id: '8', event_type: 'new_order', payload: { order_number: '1039', total_price: 324.00 }, created_at: new Date(now - 1500000).toISOString() },
+  ]
+}
 
 // ── Page Component ─────────────────────────────────────────────────────────
 
 export default function DashboardPage() {
   const [useMock, setUseMock] = useState(false)
+  const [mockEvents, setMockEvents] = useState<LiveEvent[]>([])
+
+  useEffect(() => {
+    setMockEvents(generateDashboardMockEvents())
+  }, [])
 
   const { data: storeData, error: storeError } = useApi(() => api.getStore(), [])
   const { data: revenueData, error: revenueError } = useRevenue('30d')
   const { data: topData, error: topError } = useTopProducts(5)
 
-  // Determine if we should use mock data
-  const isMock = useMock || !!(storeError && revenueError)
-  const store = storeData || MOCK_STORE
-  const revenue = revenueData?.series || MOCK_REVENUE
-  const topProducts = topData?.products || MOCK_TOP_PRODUCTS
+  // Determine if we should use mock data — fall back when API errors OR returns empty data
+  const revenueEmpty = !revenueData?.series?.length || revenueData.series.every(d => d.revenue === 0)
+  const topEmpty = !topData?.products?.length
+  const isMock = useMock || !!(storeError) || revenueEmpty
+  const store = (storeData && storeData.order_count > 0) ? storeData : MOCK_STORE
+  const revenue = revenueEmpty ? MOCK_REVENUE : revenueData!.series
+  const topProducts = topEmpty ? MOCK_TOP_PRODUCTS : topData!.products
 
   // Compute KPIs from revenue series
   const totalRevenue = revenue.reduce((sum, d) => sum + d.revenue, 0)
@@ -154,7 +163,7 @@ export default function DashboardPage() {
 
         {/* Live feed - 1/3 */}
         <Card className="min-h-[280px]">
-          <LiveFeed maxEvents={20} mockEvents={isMock ? MOCK_EVENTS : undefined} />
+          <LiveFeed maxEvents={20} mockEvents={isMock && mockEvents.length > 0 ? mockEvents : undefined} />
         </Card>
       </div>
 
