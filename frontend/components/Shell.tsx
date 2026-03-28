@@ -132,12 +132,44 @@ const navSections: NavSection[] = [
 export default function Shell({ title, children }: ShellProps) {
   const router = useRouter()
   const [mounted, setMounted] = useState(false)
+  const [showSettings, setShowSettings] = useState(false)
+  const [settingsToken, setSettingsToken] = useState('')
+  const [settingsStore, setSettingsStore] = useState('')
+  const [settingsStatus, setSettingsStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle')
 
   useEffect(() => {
     setMounted(true)
   }, [])
 
   const displayStoreUrl = mounted ? STORE_URL : ''
+
+  const handleSaveSettings = async () => {
+    if (!settingsToken.trim()) return
+    setSettingsStatus('saving')
+    try {
+      const res = await fetch('http://localhost:8000/configure', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          access_token: settingsToken.trim(),
+          store_url: settingsStore.trim() || 'gzh-07.myshopify.com',
+        }),
+      })
+      const data = await res.json()
+      if (data.error) {
+        setSettingsStatus('error')
+      } else {
+        setSettingsStatus('success')
+        setTimeout(() => {
+          setShowSettings(false)
+          setSettingsStatus('idle')
+          window.location.reload()
+        }, 1500)
+      }
+    } catch {
+      setSettingsStatus('error')
+    }
+  }
 
   return (
     <div className="flex h-screen bg-surface-0">
@@ -230,8 +262,73 @@ export default function Shell({ title, children }: ShellProps) {
                 Admin &rarr;
               </a>
             )}
+            <button
+              onClick={() => setShowSettings(true)}
+              className="text-text-tertiary hover:text-text-primary transition-colors"
+              title="Settings"
+            >
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                <path d="M6.5 1.5h3l.4 1.8.8.3 1.6-.8 2.1 2.1-.8 1.6.3.8 1.8.4v3l-1.8.4-.3.8.8 1.6-2.1 2.1-1.6-.8-.8.3-.4 1.8h-3l-.4-1.8-.8-.3-1.6.8-2.1-2.1.8-1.6-.3-.8L.3 9.5v-3l1.8-.4.3-.8-.8-1.6L3.7 1.6l1.6.8.8-.3.4-1.6z" stroke="currentColor" strokeWidth="1.2" fill="none" />
+                <circle cx="8" cy="8" r="2.5" stroke="currentColor" strokeWidth="1.2" fill="none" />
+              </svg>
+            </button>
           </div>
         </header>
+
+        {/* Settings Modal */}
+        {showSettings && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={() => setShowSettings(false)}>
+            <div className="bg-surface-1 border border-border rounded-xl p-6 w-[420px] max-w-[90vw]" onClick={(e) => e.stopPropagation()}>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-bold text-text-primary font-headline">Store Configuration</h3>
+                <button onClick={() => setShowSettings(false)} className="text-text-tertiary hover:text-text-primary">
+                  <svg width="14" height="14" viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
+                </button>
+              </div>
+
+              <div className="space-y-3">
+                <div>
+                  <label className="text-[11px] text-text-tertiary block mb-1">Store URL</label>
+                  <input
+                    type="text"
+                    placeholder="gzh-07.myshopify.com"
+                    value={settingsStore}
+                    onChange={(e) => setSettingsStore(e.target.value)}
+                    className="w-full px-3 py-2 bg-surface-2 border border-border rounded-lg text-xs text-text-primary placeholder-text-tertiary focus:outline-none focus:border-paint-yellow/30 font-mono"
+                  />
+                </div>
+                <div>
+                  <label className="text-[11px] text-text-tertiary block mb-1">Admin API Access Token</label>
+                  <input
+                    type="password"
+                    placeholder="shpua_xxxxxxxxxxxxxxxxxxxxxxxx"
+                    value={settingsToken}
+                    onChange={(e) => setSettingsToken(e.target.value)}
+                    className="w-full px-3 py-2 bg-surface-2 border border-border rounded-lg text-xs text-text-primary placeholder-text-tertiary focus:outline-none focus:border-paint-yellow/30 font-mono"
+                  />
+                  <p className="text-[10px] text-text-tertiary mt-1">Use the shpua_ token, not shpss_</p>
+                </div>
+
+                <button
+                  onClick={handleSaveSettings}
+                  disabled={!settingsToken.trim() || settingsStatus === 'saving'}
+                  className={`w-full py-2 rounded-lg text-xs font-bold transition-all ${
+                    settingsStatus === 'success'
+                      ? 'bg-[#00E676]/20 text-[#00E676] border border-[#00E676]/30'
+                      : settingsStatus === 'error'
+                      ? 'bg-[#FF3D57]/20 text-[#FF3D57] border border-[#FF3D57]/30'
+                      : 'bg-paint-yellow text-surface-0 hover:bg-paint-yellow/90 disabled:opacity-40'
+                  }`}
+                >
+                  {settingsStatus === 'saving' ? 'Connecting & Syncing...'
+                    : settingsStatus === 'success' ? 'Connected! Reloading...'
+                    : settingsStatus === 'error' ? 'Connection Failed — Try Again'
+                    : 'Connect Store'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Content */}
         <main className="flex-1 overflow-y-auto p-6">{children}</main>

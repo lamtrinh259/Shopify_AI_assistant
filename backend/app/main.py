@@ -121,6 +121,48 @@ app.include_router(actions.router)
 app.include_router(shopify_proxy.router)
 
 
+@app.post("/configure")
+async def configure_store(request: Request):
+    """Update Shopify credentials, rewrite .env, and re-sync."""
+    from pathlib import Path
+    body = await request.json()
+    token = body.get("access_token", "").strip()
+    store_url = body.get("store_url", "").strip()
+
+    if not token:
+        return {"error": "access_token is required"}
+
+    # Find and rewrite .env
+    _backend_dir = Path(__file__).resolve().parent.parent
+    _repo_root = _backend_dir.parent
+    env_path = _repo_root / ".env"
+
+    env_content = f"""SHOPIFY_ACCESS_TOKEN={token}
+SHOPIFY_STORE_URL={store_url}
+SIMULATOR_ENABLED=true
+SIMULATOR_INTERVAL_MIN=60
+SIMULATOR_INTERVAL_MAX=180
+"""
+    env_path.write_text(env_content)
+
+    # Update the live client
+    new_client = ShopifyClient(
+        store_url=store_url,
+        access_token=token,
+        api_version="2025-01",
+    )
+    app.state.shopify = new_client
+
+    # Re-sync
+    try:
+        async with async_session_factory() as db:
+            await sync_all(db, new_client)
+            await db.commit()
+        return {"status": "ok", "message": f"Configured and synced {store_url}"}
+    except Exception as exc:
+        return {"status": "partial", "message": f"Configured but sync had errors: {exc}"}
+
+
 @app.get("/health")
 async def health_check():
     """Health check endpoint."""
