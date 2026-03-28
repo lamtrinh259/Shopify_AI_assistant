@@ -127,6 +127,7 @@ export function useSimulator(intervalMs = 6000, maxEvents = 50) {
   const [totalCustomers, setTotalCustomers] = useState(SERVER_DEFAULTS.customers)
   const [isRunning, setIsRunning] = useState(true)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
+  const hydrated = useRef(false)
 
   // Hydrate from localStorage after mount (client-side only)
   useEffect(() => {
@@ -135,17 +136,20 @@ export function useSimulator(intervalMs = 6000, maxEvents = 50) {
     setTotalOrders(saved.orders)
     setTotalCustomers(saved.customers)
     setEvents(loadSavedEvents())
+    hydrated.current = true
   }, [])
 
-  // Persist to localStorage
+  // Persist to localStorage (only after hydration)
   useEffect(() => {
+    if (!hydrated.current) return
     localStorage.setItem('pulse-sim', JSON.stringify({
       revenue: totalRevenue, orders: totalOrders, customers: totalCustomers
     }))
   }, [totalRevenue, totalOrders, totalCustomers])
 
-  // Persist events to localStorage
+  // Persist events to localStorage (only after hydration)
   useEffect(() => {
+    if (!hydrated.current) return
     if (events.length > 0) {
       localStorage.setItem('pulse-events', JSON.stringify(events.slice(0, 20)))
     }
