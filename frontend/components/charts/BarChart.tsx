@@ -25,8 +25,8 @@ export default function BarChart({
     const barHeight = 28
     const gap = 8
     const totalHeight = data.length * (barHeight + gap) - gap
-    const labelWidth = 120
-    const chartWidth = 400
+    const labelWidth = 170
+    const chartWidth = 350
 
     return (
       <svg
@@ -49,7 +49,7 @@ export default function BarChart({
                 fill="rgba(255,255,255,0.72)"
                 fontSize="11"
               >
-                {d.label.length > 18 ? d.label.slice(0, 18) + '...' : d.label}
+                {d.label.length > 24 ? d.label.slice(0, 24) + '...' : d.label}
               </text>
               {/* Bar */}
               <rect

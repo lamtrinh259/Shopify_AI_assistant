@@ -24,11 +24,19 @@ async def sync_all(db: AsyncSession, client: ShopifyClient) -> dict[str, int]:
     products = await sync_products(db, client)
     logger.info("Synced %d products", products)
 
-    orders = await sync_orders(db, client)
-    logger.info("Synced %d orders", orders)
+    orders = 0
+    try:
+        orders = await sync_orders(db, client)
+        logger.info("Synced %d orders", orders)
+    except Exception as exc:
+        logger.warning("Order sync failed (app may lack order access): %s", exc)
 
-    customers = await sync_customers(db, client)
-    logger.info("Synced %d customers", customers)
+    customers = 0
+    try:
+        customers = await sync_customers(db, client)
+        logger.info("Synced %d customers", customers)
+    except Exception as exc:
+        logger.warning("Customer sync failed: %s", exc)
 
     await EventManager.get().publish("sync.completed", {
         "products": products,
@@ -209,18 +217,18 @@ async def sync_orders(db: AsyncSession, client: ShopifyClient) -> int:
                     "total_tax": total_tax,
                     "currency": currency,
                     "financial_status": (
-                        node.get("financialStatus", "PENDING").lower()
+                        node.get("displayFinancialStatus", "PENDING").lower()
                     ),
                     "fulfillment_status": (
-                        (node.get("fulfillmentStatus") or "unfulfilled").lower()
+                        (node.get("displayFulfillmentStatus") or "unfulfilled").lower()
                     ),
                     "line_items": json.dumps(line_items),
                     "customer_id": customer_id,
                     "customer_email": customer_email,
                     "customer_name": customer_name,
                     "discount_codes": json.dumps(node.get("discountCodes", [])),
-                    "landing_site": node.get("landingSite", ""),
-                    "referring_site": node.get("referringSite", ""),
+                    "landing_site": "",
+                    "referring_site": "",
                     "processed_at": processed_at_str,
                     "created_at": datetime.now(timezone.utc).isoformat(),
                     "is_simulated": is_simulated,

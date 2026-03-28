@@ -203,8 +203,8 @@ class ShopifyClient:
                     subtotalPriceSet { shopMoney { amount } }
                     totalTaxSet { shopMoney { amount } }
                     totalDiscountsSet { shopMoney { amount } }
-                    financialStatus
-                    fulfillmentStatus
+                    displayFinancialStatus
+                    displayFulfillmentStatus
                     customer { id email firstName lastName }
                     processedAt
                     lineItems(first: 50) {
@@ -220,8 +220,6 @@ class ShopifyClient:
                         }
                     }
                     discountCodes
-                    landingSite
-                    referringSite
                     tags
                 }
             }

@@ -36,20 +36,20 @@ const MOCK_RESPONSES: Record<string, { en: string; es: string }> = {
     es: '📊 Tu puntuación de salud es 6.9/10 (Regular). Los ingresos subieron 17.6% vs semana pasada — buen momentum. Sin embargo, el Mix de Clientes es bajo (3.5) — necesitas más clientes recurrentes. Recomiendo una campaña de descuento de lealtad.',
   },
   'which products need attention?': {
-    en: '⚠️ 2 products need immediate attention:\n\n1. **The Draft Snowboard** — 0 sales in 14 days. Dead stock. Recommend 20% discount.\n2. **The Complete Snowboard** — only 3 units left, selling ~4/day. Will stockout in <1 day. Urgent restock needed.\n\nAlpine Goggles are archived with 0 inventory — consider removing from catalog.',
-    es: '⚠️ 2 productos necesitan atención inmediata:\n\n1. **The Draft Snowboard** — 0 ventas en 14 días. Stock muerto. Recomiendo 20% de descuento.\n2. **The Complete Snowboard** — solo 3 unidades, vendiendo ~4/día. Se agota en <1 día. Restock urgente.\n\nAlpine Goggles está archivado con 0 inventario — considera eliminarlo del catálogo.',
+    en: '⚠️ 2 products need immediate attention:\n\n1. **Stainless Water Bottle** — 0 sales in 14 days. Dead stock. Recommend 20% discount.\n2. **Minimalist Watch Silver** — only 3 units left, selling ~4/day. Will stockout in <1 day. Urgent restock needed.\n\nYoga Mat Premium are archived with 0 inventory — consider removing from catalog.',
+    es: '⚠️ 2 productos necesitan atención inmediata:\n\n1. **Stainless Water Bottle** — 0 ventas en 14 días. Stock muerto. Recomiendo 20% de descuento.\n2. **Minimalist Watch Silver** — solo 3 unidades, vendiendo ~4/día. Se agota en <1 día. Restock urgente.\n\nYoga Mat Premium está archivado con 0 inventario — considera eliminarlo del catálogo.',
   },
   '¿qué productos necesitan atención?': {
-    en: '⚠️ 2 products need immediate attention:\n\n1. **The Draft Snowboard** — 0 sales in 14 days.\n2. **The Complete Snowboard** — only 3 units left.',
-    es: '⚠️ 2 productos necesitan atención:\n\n1. **The Draft Snowboard** — 0 ventas en 14 días. Stock muerto.\n2. **The Complete Snowboard** — solo 3 unidades. Restock urgente.',
+    en: '⚠️ 2 products need immediate attention:\n\n1. **Stainless Water Bottle** — 0 sales in 14 days.\n2. **Minimalist Watch Silver** — only 3 units left.',
+    es: '⚠️ 2 productos necesitan atención:\n\n1. **Stainless Water Bottle** — 0 ventas en 14 días. Stock muerto.\n2. **Minimalist Watch Silver** — solo 3 unidades. Restock urgente.',
   },
   'how can i increase revenue?': {
-    en: '💰 3 quick wins based on your data:\n\n1. **Bundle top sellers** — Complete Snowboard + Ski Wax bundle at 10% off. They\'re frequently bought together.\n2. **Re-engage dormant customers** — 312 active customers but low return rate. Send a "We miss you" email with 15% off code.\n3. **Capitalize on the sales spike** — Orders are 4.2x normal right now. Push a flash sale to ride the momentum.\n\nEstimated impact: +$2,400/week.',
-    es: '💰 3 acciones rápidas basadas en tu data:\n\n1. **Bundle de bestsellers** — Complete Snowboard + Ski Wax con 10% off. Se compran juntos frecuentemente.\n2. **Reactivar clientes dormidos** — 312 clientes activos pero baja tasa de retorno. Envía email "Te extrañamos" con 15% off.\n3. **Aprovechar el pico de ventas** — Los pedidos son 4.2x lo normal ahora. Lanza flash sale.\n\nImpacto estimado: +$2,400/semana.',
+    en: '💰 3 quick wins based on your data:\n\n1. **Bundle top sellers** — Classic Black T-Shirt + Leather Crossbody Bag bundle at 10% off. They\'re frequently bought together.\n2. **Re-engage dormant customers** — 312 active customers but low return rate. Send a "We miss you" email with 15% off code.\n3. **Capitalize on the sales spike** — Orders are 4.2x normal right now. Push a flash sale to ride the momentum.\n\nEstimated impact: +$2,400/week.',
+    es: '💰 3 acciones rápidas basadas en tu data:\n\n1. **Bundle de bestsellers** — Classic Black T-Shirt + Leather Crossbody Bag con 10% off. Se compran juntos frecuentemente.\n2. **Reactivar clientes dormidos** — 312 clientes activos pero baja tasa de retorno. Envía email "Te extrañamos" con 15% off.\n3. **Aprovechar el pico de ventas** — Los pedidos son 4.2x lo normal ahora. Lanza flash sale.\n\nImpacto estimado: +$2,400/semana.',
   },
   '¿cómo puedo aumentar ingresos?': {
     en: '💰 3 quick wins based on your data...',
-    es: '💰 3 acciones rápidas:\n\n1. **Bundle de bestsellers** — Complete Snowboard + Ski Wax con 10% off.\n2. **Reactivar clientes dormidos** — Email "Te extrañamos" con 15% off.\n3. **Aprovechar el pico** — Flash sale ahora que los pedidos son 4.2x lo normal.\n\nImpacto: +$2,400/semana.',
+    es: '💰 3 acciones rápidas:\n\n1. **Bundle de bestsellers** — Classic Black T-Shirt + Leather Crossbody Bag con 10% off.\n2. **Reactivar clientes dormidos** — Email "Te extrañamos" con 15% off.\n3. **Aprovechar el pico** — Flash sale ahora que los pedidos son 4.2x lo normal.\n\nImpacto: +$2,400/semana.',
   },
   'analyze my customer base': {
     en: '👥 Customer Analysis:\n\n- **891 total customers**, 312 active (35%)\n- **Avg lifetime value**: $186.09\n- **Return rate**: 35% (below 40% benchmark)\n- **Top segment**: Champions (12%) — high R, F, M scores\n- **Biggest opportunity**: 248 "At Risk" customers who bought 2+ times but haven\'t returned in 30 days\n\nAction: Target "At Risk" segment with personalized win-back campaign. Expected recovery: 15-20% = ~50 customers = ~$9,300 revenue.',

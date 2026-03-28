@@ -64,8 +64,11 @@ async def lifespan(app: FastAPI):
                 await db.commit()
                 logger.info("Initial sync complete")
             except Exception as exc:
-                logger.error("Initial sync failed: %s", exc)
-                await db.rollback()
+                logger.error("Initial sync failed: %s — committing partial data", exc)
+                try:
+                    await db.commit()
+                except Exception:
+                    await db.rollback()
 
     # Start order simulator
     simulator_task = None
