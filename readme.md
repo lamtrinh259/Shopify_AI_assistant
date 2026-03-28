@@ -71,27 +71,34 @@ SIMULATOR_INTERVAL_MAX=180
 
 > **Note:** `SHOPIFY_STORE_URL` must include the `https://` prefix.
 
-### 2. Install dependencies
+### 2. Install dependencies & seed demo data
 
+**Terminal 1 — Backend:**
 ```bash
-npm run setup
+cd backend
+pip install -r requirements.txt
+python seed_demo.py
+python -m uvicorn app.main:app --reload --port 8000
 ```
 
-This installs frontend (`npm install`) and backend (`pip install -r requirements.txt`) dependencies.
+> `seed_demo.py` populates the local SQLite database with realistic demo data (products, orders, customers). Without this step the app will show empty or mock data.
 
-### 3. Start the app
-
+**Terminal 2 — Frontend:**
 ```bash
+cd frontend
+npm install
 npm run dev
 ```
 
-This starts both servers simultaneously:
-- **Frontend** → http://localhost:3000
-- **Backend API** → http://localhost:8000
+Alternatively, if you just want to run both with one command (without seeding):
 
-Open http://localhost:3000/pulse to see the AI command center.
+```bash
+# From the repo root
+npm run setup  # installs all dependencies
+npm run dev    # starts both backend + frontend
+```
 
-On first run, the backend automatically syncs products, orders, and customers from your Shopify store into a local SQLite database (`hackathon.db`). This takes ~30 seconds.
+> **Note:** `npm run dev` does not run the seed script. For the best demo experience, run `python seed_demo.py` in the `backend/` folder first.
 
 ### 4. Enable AI Chat (optional)
 
