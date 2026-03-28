@@ -86,16 +86,19 @@ async def get_top_products(
     for order in orders:
         line_items = order.line_items or []
         for item in line_items:
-            pid = item.get("product_id") or "unknown"
+            title = item.get("title", "Unknown")
+            pid = item.get("product_id") or title
             if pid not in product_stats:
                 product_stats[pid] = {
                     "id": pid,
-                    "title": item.get("title", "Unknown"),
+                    "title": title,
                     "revenue": 0.0,
                     "units_sold": 0,
                 }
-            product_stats[pid]["revenue"] += float(item.get("amount", 0))
-            product_stats[pid]["units_sold"] += int(item.get("quantity", 0))
+            qty = int(item.get("quantity", 0))
+            price = float(item.get("amount", 0) or item.get("price", 0))
+            product_stats[pid]["revenue"] += price * qty
+            product_stats[pid]["units_sold"] += qty
 
     # Sort by revenue descending
     sorted_products = sorted(

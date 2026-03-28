@@ -117,14 +117,25 @@ function loadSavedEvents(): LiveEvent[] {
   return []
 }
 
+const SERVER_DEFAULTS = { revenue: 4280, orders: 23, customers: 312 }
+
 export function useSimulator(intervalMs = 6000, maxEvents = 50) {
-  const saved = loadSaved()
-  const [events, setEvents] = useState<LiveEvent[]>(loadSavedEvents)
-  const [totalRevenue, setTotalRevenue] = useState(saved.revenue)
-  const [totalOrders, setTotalOrders] = useState(saved.orders)
-  const [totalCustomers, setTotalCustomers] = useState(saved.customers)
+  // Always start with server defaults to avoid hydration mismatch
+  const [events, setEvents] = useState<LiveEvent[]>([])
+  const [totalRevenue, setTotalRevenue] = useState(SERVER_DEFAULTS.revenue)
+  const [totalOrders, setTotalOrders] = useState(SERVER_DEFAULTS.orders)
+  const [totalCustomers, setTotalCustomers] = useState(SERVER_DEFAULTS.customers)
   const [isRunning, setIsRunning] = useState(true)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
+
+  // Hydrate from localStorage after mount (client-side only)
+  useEffect(() => {
+    const saved = loadSaved()
+    setTotalRevenue(saved.revenue)
+    setTotalOrders(saved.orders)
+    setTotalCustomers(saved.customers)
+    setEvents(loadSavedEvents())
+  }, [])
 
   // Persist to localStorage
   useEffect(() => {

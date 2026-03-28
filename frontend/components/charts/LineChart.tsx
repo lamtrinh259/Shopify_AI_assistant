@@ -27,7 +27,7 @@ export default function LineChart({
 
   if (data.length < 2) return null
 
-  const padding = { top: 12, right: 12, bottom: showLabels ? 28 : 8, left: 12 }
+  const padding = { top: 12, right: 12, bottom: showLabels ? 36 : 8, left: 12 }
   const width = 600
   const chartW = width - padding.left - padding.right
   const chartH = height - padding.top - padding.bottom
@@ -60,7 +60,7 @@ export default function LineChart({
     : []
 
   // Label spacing: show at most 7 labels
-  const labelStep = Math.max(1, Math.floor(data.length / 7))
+  const labelStep = Math.max(1, Math.floor(data.length / 6))
 
   return (
     <svg
@@ -102,10 +102,10 @@ export default function LineChart({
             <text
               key={i}
               x={points[i].x}
-              y={height - 4}
+              y={height - 8}
               textAnchor="middle"
               fill="rgba(255,255,255,0.35)"
-              fontSize="10"
+              fontSize="9"
             >
               {d.label}
             </text>

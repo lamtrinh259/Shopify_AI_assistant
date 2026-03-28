@@ -46,11 +46,11 @@ function generateMockRevenue(): RevenueDataPoint[] {
 const MOCK_REVENUE = generateMockRevenue()
 
 const MOCK_TOP_PRODUCTS: TopProduct[] = [
-  { id: '1', title: 'The Complete Snowboard', revenue: 12480, units_sold: 48 },
-  { id: '2', title: 'The Collection Snowboard: Hydrogen', revenue: 9360, units_sold: 36 },
-  { id: '3', title: 'The Multi-managed Snowboard', revenue: 7540, units_sold: 29 },
-  { id: '4', title: 'The Draft Snowboard', revenue: 5200, units_sold: 20 },
-  { id: '5', title: 'Selling Plans Ski Wax', revenue: 3120, units_sold: 78 },
+  { id: '1', title: 'Classic Black T-Shirt', revenue: 12480, units_sold: 416 },
+  { id: '2', title: 'Minimalist Watch Silver', revenue: 9360, units_sold: 49 },
+  { id: '3', title: 'Organic Cotton Hoodie', revenue: 7540, units_sold: 94 },
+  { id: '4', title: 'Leather Crossbody Bag', revenue: 5200, units_sold: 42 },
+  { id: '5', title: 'Wireless Earbuds Pro', revenue: 3120, units_sold: 21 },
 ]
 
 // Mock events generated client-side to avoid hydration mismatch with timestamps
@@ -60,9 +60,9 @@ function generateDashboardMockEvents(): LiveEvent[] {
     { id: '1', event_type: 'new_order', payload: { order_number: '1042', total_price: 259.99 }, created_at: new Date(now - 60000).toISOString() },
     { id: '2', event_type: 'customer_created', payload: { email: 'sarah@example.com' }, created_at: new Date(now - 180000).toISOString() },
     { id: '3', event_type: 'new_order', payload: { order_number: '1041', total_price: 149.50 }, created_at: new Date(now - 300000).toISOString() },
-    { id: '4', event_type: 'inventory_change', payload: { product_title: 'Complete Snowboard' }, created_at: new Date(now - 420000).toISOString() },
+    { id: '4', event_type: 'inventory_change', payload: { product_title: 'Leather Crossbody Bag' }, created_at: new Date(now - 420000).toISOString() },
     { id: '5', event_type: 'new_order', payload: { order_number: '1040', total_price: 89.99 }, created_at: new Date(now - 600000).toISOString() },
-    { id: '6', event_type: 'product_update', payload: { title: 'Hydrogen Snowboard' }, created_at: new Date(now - 900000).toISOString() },
+    { id: '6', event_type: 'product_update', payload: { title: 'Running Shoes V2' }, created_at: new Date(now - 900000).toISOString() },
     { id: '7', event_type: 'refund_issued', payload: { order_number: '1035' }, created_at: new Date(now - 1200000).toISOString() },
     { id: '8', event_type: 'new_order', payload: { order_number: '1039', total_price: 324.00 }, created_at: new Date(now - 1500000).toISOString() },
   ]
@@ -137,7 +137,7 @@ export default function DashboardPage() {
                 label: new Date(d.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
                 value: d.revenue,
               }))}
-              height={220}
+              height={240}
               color="#00FF94"
               showGrid
               showLabels
@@ -147,8 +147,8 @@ export default function DashboardPage() {
         </div>
 
         {/* Live feed - 1/3 */}
-        <Card className="min-h-[280px]">
-          <LiveFeed maxEvents={20} mockEvents={isMock && mockEvents.length > 0 ? mockEvents : undefined} />
+        <Card className="min-h-[280px] max-h-[380px] overflow-hidden">
+          <LiveFeed maxEvents={20} mockEvents={mockEvents.length > 0 ? mockEvents : undefined} />
         </Card>
       </div>
 

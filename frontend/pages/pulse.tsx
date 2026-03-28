@@ -31,7 +31,7 @@ function generateMockEvents(): LiveEvent[] {
     { id: 'p1', event_type: 'new_order', payload: { order_number: '1042', total_price: 259.99 }, created_at: new Date(now - 45000).toISOString() },
     { id: 'p2', event_type: 'customer_created', payload: { email: 'sarah@example.com' }, created_at: new Date(now - 120000).toISOString() },
     { id: 'p3', event_type: 'new_order', payload: { order_number: '1041', total_price: 149.50 }, created_at: new Date(now - 240000).toISOString() },
-    { id: 'p4', event_type: 'inventory_change', payload: { product_title: 'Complete Snowboard' }, created_at: new Date(now - 360000).toISOString() },
+    { id: 'p4', event_type: 'inventory_change', payload: { product_title: 'Leather Crossbody Bag' }, created_at: new Date(now - 360000).toISOString() },
     { id: 'p5', event_type: 'new_order', payload: { order_number: '1040', total_price: 89.99 }, created_at: new Date(now - 540000).toISOString() },
   ]
 }
@@ -66,34 +66,40 @@ export default function PulsePage() {
 
   // Try to fetch real data, fall back to mock
   const { data: storeData, error: storeError } = useApi(() => api.getStore(), [])
-  const { data: revenueData, error: revenueError } = useRevenue('7d')
+  const { data: revenueData, error: revenueError } = useRevenue('30d')
 
   const isMock = !!(storeError || revenueError)
 
   // Live event simulator
   const simulator = useSimulator(6000, 30)
 
-  // Generate initial mock events + start loading
+  const [alerts, setAlerts] = useState<ReturnType<typeof generateMockAlerts>>([])
+
+  // Generate initial mock events + alerts client-side only (avoids hydration mismatch from Date.now())
   useEffect(() => {
     setMockEvents(generateMockEvents())
+    setAlerts(generateMockAlerts(t))
     const timer = setTimeout(() => setLoading(false), 800)
     return () => clearTimeout(timer)
-  }, [])
+  }, [t])
 
   // Calculate health score
   const breakdown = calculateHealthScore(MOCK_STORE_DATA)
   const scoreLabel = t(getScoreLabel(breakdown.total))
 
   const revenue = revenueData?.series || MOCK_REVENUE
-  const alerts = generateMockAlerts(t)
 
-  // Live KPI data from simulator
+  // Use real store data when available, simulator adds on top
+  const realRevenue = revenue.reduce((sum, d) => sum + d.revenue, 0)
+  const realOrders = revenue.reduce((sum, d) => sum + d.orders, 0)
+  const realCustomers = storeData?.customer_count || 15
+
   const liveKpiData = {
     ...MOCK_KPI_DATA,
-    todayRevenue: simulator.totalRevenue,
-    ordersToday: simulator.totalOrders,
-    activeCustomers: simulator.totalCustomers,
-    avgOrderValue: simulator.totalOrders > 0 ? Math.round((simulator.totalRevenue / simulator.totalOrders) * 100) / 100 : 186.09,
+    todayRevenue: realRevenue > 0 ? realRevenue : simulator.totalRevenue,
+    ordersToday: realOrders > 0 ? realOrders : simulator.totalOrders,
+    activeCustomers: realCustomers > 0 ? realCustomers : simulator.totalCustomers,
+    avgOrderValue: realOrders > 0 ? Math.round((realRevenue / realOrders) * 100) / 100 : 186.09,
   }
 
   // Merge simulator events with initial mock events
@@ -184,7 +190,7 @@ export default function PulsePage() {
 
         {/* Live Feed */}
         <div className="col-span-3 stagger-4">
-          <Card className="h-full">
+          <Card className="h-full max-h-[420px] overflow-hidden">
             <LiveFeed maxEvents={10} mockEvents={allEvents} />
           </Card>
         </div>
