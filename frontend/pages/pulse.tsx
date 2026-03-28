@@ -90,35 +90,17 @@ export default function PulsePage() {
   const baseOrders = revenue.reduce((sum, d) => sum + d.orders, 0)
   const baseCustomers = storeData?.customer_count || 15
 
-  // Track simulator starting values to compute delta (set after mount only)
-  const simStartRef = React.useRef<{ revenue: number; orders: number; customers: number } | null>(null)
-  const [simMounted, setSimMounted] = React.useState(false)
-
-  React.useEffect(() => {
-    simStartRef.current = {
-      revenue: simulator.totalRevenue,
-      orders: simulator.totalOrders,
-      customers: simulator.totalCustomers,
-    }
-    setSimMounted(true)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  // Delta = what simulator added SINCE page load (0 until mounted)
-  const deltaRevenue = simMounted && simStartRef.current ? simulator.totalRevenue - simStartRef.current.revenue : 0
-  const deltaOrders = simMounted && simStartRef.current ? simulator.totalOrders - simStartRef.current.orders : 0
-  const deltaCustomers = simMounted && simStartRef.current ? simulator.totalCustomers - simStartRef.current.customers : 0
-
-  const totalRevenue = baseRevenue + Math.max(0, deltaRevenue)
-  const totalOrders = baseOrders + Math.max(0, deltaOrders)
-  const totalCustomers = baseCustomers + Math.max(0, deltaCustomers)
+  // Simulator starts at 0 — just add its values on top of API base
+  const totalRevenue = baseRevenue + simulator.totalRevenue
+  const totalOrders = baseOrders + simulator.totalOrders
+  const totalCustomers = baseCustomers + simulator.totalCustomers
 
   // Calculate health score from LIVE data
   const last7 = revenue.slice(-7)
   const prev7 = revenue.slice(-14, -7)
   const rev7d = last7.reduce((s, d) => s + d.revenue, 0)
   const revPrev7d = prev7.reduce((s, d) => s + d.revenue, 0) || 1
-  const ordersToday = Math.max(1, Math.max(0, deltaOrders) + (last7[last7.length - 1]?.orders || 0))
+  const ordersToday = Math.max(1, simulator.totalOrders + (last7[last7.length - 1]?.orders || 0))
   const avgDailyOrders = Math.max(1, Math.round(baseOrders / 30))
 
   const liveStoreData = {
