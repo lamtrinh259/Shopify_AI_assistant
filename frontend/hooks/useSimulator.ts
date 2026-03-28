@@ -108,9 +108,18 @@ function loadSaved(): { revenue: number; orders: number; customers: number } {
   return { revenue: 4280, orders: 23, customers: 312 }
 }
 
+function loadSavedEvents(): LiveEvent[] {
+  if (typeof window === 'undefined') return []
+  try {
+    const s = localStorage.getItem('pulse-events')
+    if (s) return JSON.parse(s)
+  } catch {}
+  return []
+}
+
 export function useSimulator(intervalMs = 6000, maxEvents = 50) {
   const saved = loadSaved()
-  const [events, setEvents] = useState<LiveEvent[]>([])
+  const [events, setEvents] = useState<LiveEvent[]>(loadSavedEvents)
   const [totalRevenue, setTotalRevenue] = useState(saved.revenue)
   const [totalOrders, setTotalOrders] = useState(saved.orders)
   const [totalCustomers, setTotalCustomers] = useState(saved.customers)
@@ -123,6 +132,13 @@ export function useSimulator(intervalMs = 6000, maxEvents = 50) {
       revenue: totalRevenue, orders: totalOrders, customers: totalCustomers
     }))
   }, [totalRevenue, totalOrders, totalCustomers])
+
+  // Persist events to localStorage
+  useEffect(() => {
+    if (events.length > 0) {
+      localStorage.setItem('pulse-events', JSON.stringify(events.slice(0, 20)))
+    }
+  }, [events])
 
   const addEvent = useCallback(() => {
     const event = generateEvent()
