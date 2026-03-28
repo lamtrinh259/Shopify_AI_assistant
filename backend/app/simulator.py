@@ -105,15 +105,33 @@ async def run_simulator(
                 # ~15% chance: add a discount code
                 discount_code = random.choice(DISCOUNT_CODES) if random.random() < 0.15 else None
 
-                # Create order on Shopify
-                result_json = await shopify_client.create_order(
-                    line_items=line_items,
-                    customer=customer,
-                    discount_code=discount_code,
-                )
-
-                order = result_json.get("order", {})
-                order_id = order.get("id")
+                # Try to create order on Shopify, fall back to local-only
+                order_id = None
+                order = {}
+                try:
+                    result_json = await shopify_client.create_order(
+                        line_items=line_items,
+                        customer=customer,
+                        discount_code=discount_code,
+                    )
+                    order = result_json.get("order", {})
+                    order_id = order.get("id")
+                except Exception:
+                    # Shopify API failed — create order locally only
+                    order_id = random.randint(100000, 999999)
+                    order = {
+                        "id": order_id,
+                        "order_number": order_counter,
+                        "total_price": str(total_price),
+                        "subtotal_price": str(total_price),
+                        "total_discounts": "0",
+                        "total_tax": "0",
+                        "currency": "USD",
+                        "financial_status": "paid",
+                        "fulfillment_status": None,
+                        "line_items": line_items,
+                        "customer": customer,
+                    }
 
                 if order_id:
                     logger.info(
@@ -130,7 +148,7 @@ async def run_simulator(
                             "id": str(li.get("id", "")),
                             "title": li.get("title", ""),
                             "quantity": li.get("quantity", 0),
-                            "amount": float(li.get("price", 0)) * li.get("quantity", 1),
+                            "amount": float(li.get("price", 0) or 0) * int(li.get("quantity", 1)),
                             "variant_id": str(li.get("variant_id", "")),
                             "product_id": str(li.get("product_id", "")),
                         })
@@ -147,7 +165,7 @@ async def run_simulator(
                         fulfillment_status=order.get("fulfillment_status"),
                         line_items=line_items_json,
                         customer_id=str(order.get("customer", {}).get("id", "")) if order.get("customer") else None,
-                        customer_email=order.get("customer", {}).get("email") if order.get("customer") else None,
+                        customer_email=order.get("customer", {}).get("email") if order.get("customer") else customer.get("email"),
                         customer_name=f"{first} {last}",
                         discount_codes=order.get("discount_codes", []),
                         landing_site=None,
