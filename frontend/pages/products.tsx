@@ -123,9 +123,10 @@ export default function ProductsPage() {
     status: statusFilter === 'all' ? undefined : statusFilter,
   })
 
-  const isMock = !!error || !apiData
-  const products = apiData?.data || MOCK_PRODUCTS
-  const totalPages = apiData?.pages || 1
+  const hasRealData = apiData && apiData.data && apiData.data.length > 0
+  const isMock = !!error || !hasRealData
+  const products = hasRealData ? apiData.data : MOCK_PRODUCTS
+  const totalPages = hasRealData ? apiData.pages : 1
 
   // Client-side filtering for mock data
   const filtered = isMock
@@ -192,14 +193,6 @@ export default function ProductsPage() {
 
   return (
     <Shell title="Products">
-      {isMock && (
-        <div className="bg-status-warning/10 border border-status-warning/20 rounded-lg px-4 py-2 mb-4">
-          <span className="text-xs text-status-warning">
-            Using demo data — connect to The Pipe for live data
-          </span>
-        </div>
-      )}
-
       <Card>
         {/* Search + Tabs */}
         <div className="mb-4">

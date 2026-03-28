@@ -145,9 +145,10 @@ export default function OrdersPage() {
     .filter((e) => e.event_type === 'new_order')
     .map((e) => String(e.payload.order_number))
 
-  const isMock = !!error || !apiData
-  const orders = apiData?.data || MOCK_ORDERS
-  const totalPages = apiData?.pages || 1
+  const hasRealData = apiData && apiData.data && apiData.data.length > 0
+  const isMock = !!error || !hasRealData
+  const orders = hasRealData ? apiData.data : MOCK_ORDERS
+  const totalPages = hasRealData ? apiData.pages : 1
 
   // Client-side filtering for mock data
   const filtered = isMock
@@ -216,14 +217,6 @@ export default function OrdersPage() {
 
   return (
     <Shell title="Orders">
-      {isMock && (
-        <div className="bg-status-warning/10 border border-status-warning/20 rounded-lg px-4 py-2 mb-4">
-          <span className="text-xs text-status-warning">
-            Using demo data — connect to The Pipe for live data
-          </span>
-        </div>
-      )}
-
       <Card>
         <div className="mb-4">
           <Tabs

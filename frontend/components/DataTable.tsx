@@ -48,7 +48,7 @@ export default function DataTable({
                 <th
                   key={col.key}
                   className={cn(
-                    'px-3 py-2.5 text-left text-xs font-medium text-text-tertiary uppercase tracking-wider bg-surface-1',
+                    'px-3 py-2.5 text-left text-label bg-surface-1',
                     col.sortable && 'cursor-pointer select-none hover:text-text-secondary'
                   )}
                   onClick={() => col.sortable && handleSort(col.key)}
