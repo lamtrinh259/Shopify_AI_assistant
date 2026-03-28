@@ -74,28 +74,30 @@ function getResponse(input: string, lang: 'en' | 'es'): string {
 }
 
 export default function AiChat({ t }: AiChatProps) {
-  const [messages, setMessages] = useState<Message[]>(() => {
-    if (typeof window === 'undefined') return []
+  const [messages, setMessages] = useState<Message[]>([])
+  const [input, setInput] = useState('')
+  const [isTyping, setIsTyping] = useState(false)
+  const [lang, setLang] = useState<'en' | 'es'>('en')
+  const [apiKey, setApiKey] = useState('')
+  const [showKeyInput, setShowKeyInput] = useState(false)
+  const chatHydrated = useRef(false)
+
+  // Load from localStorage after mount only
+  useEffect(() => {
     try {
       const saved = localStorage.getItem('pulse-chat')
       if (saved) {
         const parsed = JSON.parse(saved)
-        return parsed.map((m: any) => ({ ...m, timestamp: new Date(m.timestamp) }))
+        setMessages(parsed.map((m: any) => ({ ...m, timestamp: new Date(m.timestamp) })))
       }
     } catch {}
-    return []
-  })
-  const [input, setInput] = useState('')
-  const [isTyping, setIsTyping] = useState(false)
-  const [lang, setLang] = useState<'en' | 'es'>('en')
-  const [apiKey, setApiKey] = useState(() => {
-    if (typeof window === 'undefined') return ''
-    return localStorage.getItem('anthropic-key') || ''
-  })
-  const [showKeyInput, setShowKeyInput] = useState(false)
+    setApiKey(localStorage.getItem('anthropic-key') || '')
+    chatHydrated.current = true
+  }, [])
 
   // Persist chat to localStorage
   useEffect(() => {
+    if (!chatHydrated.current) return
     if (messages.length > 0) {
       localStorage.setItem('pulse-chat', JSON.stringify(messages))
     } else {
